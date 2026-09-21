@@ -315,7 +315,7 @@ Dibuat dengan **CSS media query** (`@media (max-width: 720px) { … }`), **CSS G
 | `admin.js` + `indexadmin.html` | ~820 + ~450 | Login & dashboard admin |
 | `login.html`, `register.html` | ~160 masing-masing | Form login & registrasi member |
 | `oasis-mark.svg`, `oasis-cs.svg` | — | Logo OASIS & logo CS |
-| `tests/*.test.cjs` | ~300 | 18 unit test otomatis |
+| `tests/*.test.cjs` | ~300 | 19 unit test otomatis |
 
 ### 8.3 Library & alat: apa dan untuk apa
 
@@ -385,20 +385,27 @@ localStorage["oasis_booking_history"]  ← booking disimpan (terbaru di atas)
                  → event "storage" → tab member ikut update
 ```
 
-### 9.3 Reservasi via WhatsApp (siapa pun)
+### 9.3 Reservasi via WhatsApp (Khusus Member / Harus Login)
 
 ```
 Klik "Book" / "Book Your Stay" ──▶ openReserveModal()
-Isi villa, check-in, check-out, tamu, nama
-      │  updateReserveSummary(): malam × tarif = estimasi total (langsung tampil)
-      ▼
-validateReservation(): villa ada? check-in ≥ hari ini (WITA)? 1–365 malam? tamu 1–30? nama?
-      ▼
-buildReservationMessage()  → teks pesan rapi
-whatsappUrl(pesan)         → https://wa.me/6282179808686?text=<pesan ter-encode>
-window.open(...)           → WhatsApp terbuka, tamu tekan Send
-      ▼
-Admin menerima chat di WhatsApp  (reservasi TIDAK disimpan di website)
+      │
+      ├──▶ Jika Guest (belum login):
+      │       requireMember() langsung mengarahkan ke:
+      │       login.html?reason=auth_required&feature=Book+Your+Stay
+      │
+      └──▶ Jika Member (sudah login):
+              Buka modal #reserveModal
+              Isi villa, check-in, check-out, tamu, nama
+                    │  updateReserveSummary(): malam × tarif = estimasi total
+                    ▼
+              validateReservation(): villa ada? check-in ≥ hari ini (WITA)? 1–365 malam? tamu 1–30? nama?
+                    ▼
+              buildReservationMessage()  → teks pesan rapi
+              whatsappUrl(pesan)         → https://wa.me/6282179808686?text=<pesan ter-encode>
+              window.open(...)           → WhatsApp terbuka, tamu tekan Send
+                    ▼
+              Admin menerima chat di WhatsApp (reservasi dikonfirmasi via WhatsApp)
 ```
 
 ### 9.4 Admin mengubah villa → website

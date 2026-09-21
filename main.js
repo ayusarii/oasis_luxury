@@ -162,20 +162,23 @@ function renderHeroFeature() {
 
 /**
  * 3. Property catalog
- * - Everyone sees every villa, Best Sellers first.
+ * - Guests see only the Best Seller villas; members see all villas (Best Sellers first).
  * - Members also get a quick spec summary and the Details pop-up.
  */
 function renderCatalog(isAuth) {
+  if (typeof isAuth !== 'boolean') isAuth = !!OasisDB.getCurrentUser();
   const catalogGrid = document.getElementById('estateCatalogGrid');
   const catalogSectionSub = document.getElementById('catalogSubtitle');
   if (!catalogGrid) return;
 
-  const itemsToRender = catalogProperties();
+  const allVillas = catalogProperties();
+  const bestSellers = allVillas.filter((item) => item.isBestSeller);
+  const itemsToRender = isAuth ? allVillas : (bestSellers.length ? bestSellers : allVillas.slice(0, 3));
 
   if (catalogSectionSub) {
     catalogSectionSub.innerHTML = isAuth
       ? `All <strong>${plural(itemsToRender.length, 'private villa')}</strong> ${itemsToRender.length === 1 ? 'is' : 'are'} open to you. Click <em>Details</em> to see bedrooms, bathrooms, facilities and nightly rates.`
-      : `<strong>${plural(itemsToRender.length, 'private villa')}</strong> across Bali, available by the night. Press <em>Book</em> on any of them.`;
+      : `Featuring our <strong>Best Seller</strong> private villas across Bali, available by the night.`;
   }
 
   if (itemsToRender.length === 0) {
@@ -243,9 +246,12 @@ function renderCatalog(isAuth) {
     });
   });
 
-  // Reserving is open to everyone, guests included
+  // Reserving is open to members only (requires login)
   catalogGrid.querySelectorAll('.reserve-link-btn').forEach((btn) => {
-    btn.addEventListener('click', () => openReserveModal(btn.getAttribute('data-reserve-id')));
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openReserveModal(btn.getAttribute('data-reserve-id'));
+    });
   });
 }
 
@@ -266,9 +272,20 @@ function handleDetailClick(estateId) {
 
 /**
  * 5. Main feature buttons: guests are sent to the login page
- * ("View Full Catalog" is a plain #residences link, open to everyone)
  */
 function setupFeatureButtons() {
+  // "View Full Catalog" in the hero: guests must log in to view the full collection
+  const btnExploreCatalog = document.getElementById('btnExploreCatalog');
+  if (btnExploreCatalog) {
+    btnExploreCatalog.addEventListener('click', (e) => {
+      const user = OasisDB.getCurrentUser();
+      if (!user) {
+        e.preventDefault();
+        requireMember('The full catalog', () => {});
+      }
+    });
+  }
+
   // "Book a Meeting" in the hero
   const btnBookMeeting = document.getElementById('btnBookMeeting');
   if (btnBookMeeting) {
@@ -387,6 +404,11 @@ function setupReservations() {
     e.preventDefault();
 
     const user = OasisDB.getCurrentUser();
+    if (!user) {
+      window.location.href = `login.html?reason=auth_required&feature=${encodeURIComponent('Book Your Stay')}`;
+      return;
+    }
+
     const villaId = document.getElementById('rsVilla').value;
     const request = {
       property: OasisDB.getPropertyById(villaId),
@@ -413,32 +435,33 @@ function setupReservations() {
 }
 
 function openReserveModal(preselectedId) {
-  const modal = document.getElementById('reserveModal');
-  if (!modal) return;
+  requireMember('Book Your Stay', (user) => {
+    const modal = document.getElementById('reserveModal');
+    if (!modal) return;
 
-  const user = OasisDB.getCurrentUser();
-  const villas = catalogProperties();
-  const select = document.getElementById('rsVilla');
-  const keep = preselectedId || select.value;
-  select.innerHTML = villas.length
-    ? `<option value="">Choose a villa…</option>` +
-      villas
-        .map((p) => `<option value="${esc(p.id)}">${esc(p.title)} (${esc(p.location)} – ${esc(OasisUtils.formatNightlyRate(p.nightlyRate))})</option>`)
-        .join('')
-    : '<option value="">No villas available right now</option>';
-  if (villas.some((p) => p.id === keep)) select.value = keep;
+    const villas = catalogProperties();
+    const select = document.getElementById('rsVilla');
+    const keep = preselectedId || select.value;
+    select.innerHTML = villas.length
+      ? `<option value="">Choose a villa…</option>` +
+        villas
+          .map((p) => `<option value="${esc(p.id)}">${esc(p.title)} (${esc(p.location)} – ${esc(OasisUtils.formatNightlyRate(p.nightlyRate))})</option>`)
+          .join('')
+      : '<option value="">No villas available right now</option>';
+    if (villas.some((p) => p.id === keep)) select.value = keep;
 
-  const nameInput = document.getElementById('rsName');
-  if (user && !nameInput.value) nameInput.value = user.name;
+    const nameInput = document.getElementById('rsName');
+    if (user && !nameInput.value) nameInput.value = user.name;
 
-  const checkIn = document.getElementById('rsCheckIn');
-  checkIn.min = OasisUtils.baliTodayISO();
-  if (checkIn.value && checkIn.value < checkIn.min) checkIn.value = '';
-  syncReserveCheckOut();
-  updateReserveSummary();
-  showFormError('rsError', '');
+    const checkIn = document.getElementById('rsCheckIn');
+    checkIn.min = OasisUtils.baliTodayISO();
+    if (checkIn.value && checkIn.value < checkIn.min) checkIn.value = '';
+    syncReserveCheckOut();
+    updateReserveSummary();
+    showFormError('rsError', '');
 
-  openModal(modal);
+    openModal(modal);
+  });
 }
 
 // Check-out is at least one night after check-in; moves forward when check-in passes it

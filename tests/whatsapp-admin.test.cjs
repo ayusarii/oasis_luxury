@@ -147,3 +147,13 @@ test('every villa is listed for everyone, Best Sellers first', () => {
   assert.ok(firstOther > 0);
   assert.ok(list.slice(firstOther).every((p) => !p.isBestSeller));
 });
+
+test('guests see only best seller villas in catalog while members see all villas', () => {
+  const { run } = load('main.js');
+  const all = run('catalogProperties')();
+  const guestVillas = all.filter((p) => p.isBestSeller);
+  assert.equal(all.length, 6);
+  assert.equal(guestVillas.length, 3);
+  assert.ok(guestVillas.every((p) => p.isBestSeller));
+});
+
