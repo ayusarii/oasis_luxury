@@ -1,405 +1,824 @@
 /**
- * OASIS Real Estate - Main Script
- * Mengelola rendering katalog, otentikasi UI, proteksi fitur, modal spesifikasi detail unit,
- * pop-up notifikasi booking berhasil, dan surat konfirmasi email otomatis.
+ * OASIS Villas - Main Script
+ * Handles catalog rendering, member auth UI, feature gating, the property detail modal,
+ * booking confirmations, the e-ticket history, the confirmation email preview and
+ * WhatsApp reservations (wa.me links to the admin number).
+ * OASIS rents private villas by the night (prices in IDR); every schedule runs on
+ * Bali time (WITA, UTC+8).
  */
 
-// Dataset Properti Mewah OASIS
-const OASIS_ESTATES = [
-  {
-    id: 'palm-crest',
-    title: 'Palm Crest Villa',
-    tag: 'Waterfront',
-    location: 'Palm Jumeirah',
-    price: 'AED 42.5M',
-    isBestSeller: true,
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
-    bedrooms: 6,
-    bathrooms: 7,
-    area: '12,500 sq ft (1,161 m²)',
-    garage: '4 Mobil (Basement)',
-    description: 'Mahakarya arsitektur modern di tepi pantai Palm Jumeirah dengan panorama langsung ke Teluk Arab dan Dubai Marina skyline.',
-    facilities: [
-      'Private Infinity Pool tepi pantai pribadi',
-      'Akses pantai pribadi langsung dengan dermaga pribadi',
-      'Sistem otomatisasi Smart Home terintegrasi (Crestron)',
-      'Wellness Suite privat (Sauna, Steam, & Ruang Pijat Spa)',
-      'Dapur chef marmer Italia & dry kitchen terpisah',
-      'Keamanan privat 24/7 dan sistem biometrik'
-    ]
-  },
-  {
-    id: 'al-saraya',
-    title: 'Al Saraya Villa',
-    tag: 'Marina View',
-    location: 'Dubai Marina',
-    price: 'AED 28.4M',
-    isBestSeller: true,
-    image: 'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80',
-    bedrooms: 5,
-    bathrooms: 6,
-    area: '9,800 sq ft (910 m²)',
-    garage: '3 Mobil',
-    description: 'Hunian urban ultra-mewah di tepi kanal Dubai Marina dengan dermaga kapal pesiar privat dan rooftop sky lounge spektakuler.',
-    facilities: [
-      'Dermaga yacht privat (Private Yacht Berth)',
-      'Sky lounge & rooftop deck dengan area BBQ luar ruangan',
-      'Lift privat kaca panoramik dari basement hingga lantai atas',
-      'Wine cellar dengan kontrol suhu dan kelembaban presisi',
-      'Home cinema pribadi berstandar Dolby Atmos',
-      'Pantry terpisah untuk asisten rumah tangga & butler'
-    ]
-  },
-  {
-    id: 'harbor-house',
-    title: 'Harbor House',
-    tag: 'Penthouses',
-    location: 'Marina District',
-    price: 'AED 31.1M',
-    isBestSeller: true,
-    image: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=1200&q=80',
-    bedrooms: 5,
-    bathrooms: 5,
-    area: '10,400 sq ft (966 m²)',
-    garage: '3 Mobil',
-    description: 'Penthouse triplex spektakuler di lantai puncak dengan teras gantung dan pemandangan laut 360 derajat tak terbatas.',
-    facilities: [
-      'Pemandangan 360° Sky Harbor & Arabian Gulf',
-      'Kolam renang kaca gantung di langit (Sky Pool)',
-      'Perapian marmer kontemporer di grand salon',
-      'Gym pribadi lengkap dengan peralatan Technogym terbaru',
-      'Lobi lift privat dengan akses keamanan sidik jari',
-      'Layanan valet dan dedicated concierge 24 jam'
-    ]
-  },
-  {
-    id: 'luma-residence',
-    title: 'Luma Residence',
-    tag: 'Signature',
-    location: 'Dubai Hills',
-    price: 'AED 18.9M',
-    isBestSeller: false,
-    image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80',
-    bedrooms: 4,
-    bathrooms: 5,
-    area: '7,200 sq ft (669 m²)',
-    garage: '2 Mobil',
-    description: 'Kombinasi harmonis antara keanggunan minimalis modern dan lanskap hijau luas lapangan golf kejuaraan Dubai Hills.',
-    facilities: [
-      'Pemandangan langsung ke Championship Golf Course',
-      'Plunge pool infinity & dek santai kayu jati',
-      'Taman Zen bertaraf lanskap internasional',
-      'Master suite dengan walk-in closet rancangan desainer Milan',
-      'Smart climate control hemat energi dan ramah lingkungan',
-      'Akses eksklusif ke fasilitas klub komunitas Dubai Hills'
-    ]
-  },
-  {
-    id: 'royal-atlantis',
-    title: 'The Royal Atlantis Residence',
-    tag: 'Ultra Luxury',
-    location: 'Palm Jumeirah',
-    price: 'AED 54.0M',
-    isBestSeller: false,
-    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80',
-    bedrooms: 6,
-    bathrooms: 8,
-    area: '15,200 sq ft (1,412 m²)',
-    garage: '5 Mobil',
-    description: 'Puncak prestise arsitektur dunia di ikon global Atlantis The Royal, dirancang untuk gaya hidup paling eksklusif.',
-    facilities: [
-      'Sky pool pribadi di ketinggian lantai 35',
-      'Akses helipad & fasilitas VIP hotel Atlantis The Royal',
-      'Layanan room service privat dari deretan chef Michelin',
-      'Pintu masuk dan drop-off khusus penghuni residensial',
-      'Balkon melingkar dengan pemandangan Atlantis & laut lepas',
-      'Akses pantai privat sepanjang 2 kilometer'
-    ]
-  },
-  {
-    id: 'emirates-hills',
-    title: 'Emirates Hills Sanctuary',
-    tag: 'Estate Villa',
-    location: 'Emirates Hills',
-    price: 'AED 38.8M',
-    isBestSeller: false,
-    image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
-    bedrooms: 5,
-    bathrooms: 6,
-    area: '11,000 sq ft (1,022 m²)',
-    garage: '4 Mobil',
-    description: 'Vila megah di kawasan paling prestisius, menghadap danau tenang dengan taman asri dan privasi tingkat tinggi.',
-    facilities: [
-      'Tepi danau privat & taman lanskap seluas 1.5 hektar',
-      'Paviliun kolam renang outdoor & cabana mewah bergaya resort',
-      'Cigar lounge formal berpanel kayu mahoni mewah',
-      'Ruang bioskop berkapasitas 12 tempat duduk kelas satu',
-      'Sistem keamanan biometrik perimeter komprehensif',
-      'Garasi bawah tanah dengan teknologi lift mobil canggih'
-    ]
-  }
-];
+const OASIS_CONTACT = {
+  email: 'oasis@gmail.com',
+  phone: '+62 821-7980-8686',
+  // Admin WhatsApp (0821-7980-8686) in the international format wa.me links need
+  whatsapp: '6282179808686',
+  venue: 'Private VIP Lounge (Seminyak, Bali) / Google Meet VIP Room',
+  advisor: 'Alexander Wright (Senior Villa Specialist)'
+};
+
+const esc = OasisUtils.escapeHtml;
+
+// WhatsApp glyph from the #waGlyph symbol in index.html
+const WHATSAPP_ICON = '<svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#waGlyph" /></svg>';
+
+// Meeting shown in the latest success pop-up; "Open Confirmation Email" uses it
+let lastMeetingBooking = null;
+
+const STORAGE_FULL_MESSAGE = 'Your booking could not be saved because browser storage is full or blocked. Please free up space and try again.';
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Inisialisasi animasi AOS
-  if (typeof AOS !== 'undefined') {
-    AOS.init({ duration: 800, easing: 'ease-out-cubic', once: true, offset: 50 });
-  }
-
-  // Cek sesi otentikasi saat ini
-  const currentUser = typeof OasisDB !== 'undefined' ? OasisDB.getCurrentUser() : null;
+  // Current member session
+  const currentUser = OasisDB.getCurrentUser();
   const isAuth = !!currentUser;
 
-  // Render komponen halaman
+  // Render page components
   renderHeaderAuthState(currentUser);
+  renderHeroFeature();
   renderCatalog(isAuth);
-  setupFeatureButtons(isAuth, currentUser);
+  renderTestimonials({ animate: true });
+  setupFeatureButtons();
   setupModals();
+  setupReservations();
+  setupConcierge();
+  setupTestimonials();
+  setupMobileNav();
+  setupMobileQuickbar();
+  setupLiveSync(currentUser);
+  startBaliClock();
+
+  // Start AOS once the dynamic catalog is in the DOM. If the AOS script failed to load,
+  // drop the data-aos attributes so aos.css cannot keep that content invisible.
+  if (typeof AOS !== 'undefined') {
+    AOS.init({ duration: 800, easing: 'ease-out-cubic', once: true, offset: 50 });
+  } else {
+    document.querySelectorAll('[data-aos]').forEach((el) => el.removeAttribute('data-aos'));
+  }
 });
 
 /**
- * 1. Render Status Otentikasi di Navbar
+ * Keep this tab in step with other tabs of the same browser (login / logout elsewhere,
+ * account removed or password reset by the admin, catalog or review changes).
  */
-function renderHeaderAuthState(user) {
-  const authNavContainer = document.getElementById('authNavContainer');
-  const navETicketLink = document.getElementById('navETicketLink');
-  if (!authNavContainer) return;
+function setupLiveSync(pageUser) {
+  const pageUserId = pageUser ? pageUser.id : null;
 
-  if (user) {
-    const bookings = getStoredBookings();
-    const ticketCount = bookings.length;
-    const ticketBadgeLabel = ticketCount > 0 ? `E-Ticket (${ticketCount})` : 'E-Ticket';
-
-    // Tampilkan link E-Ticket di navbar menu saat login
-    if (navETicketLink) {
-      navETicketLink.style.display = 'inline-block';
-      navETicketLink.innerHTML = ticketCount > 0 
-        ? `E-Ticket <span class="nav-ticket-counter">${ticketCount}</span>` 
-        : 'E-Ticket';
-      navETicketLink.onclick = (e) => {
-        e.preventDefault();
-        openETicketHistory();
-      };
+  window.addEventListener('storage', (e) => {
+    const user = OasisDB.getCurrentUser();
+    if ((user ? user.id : null) !== pageUserId) {
+      // Signed in, signed out or signed out by the admin: reload so every part of the page agrees
+      window.location.reload();
+      return;
     }
-
-    const initials = user.name
-      ? user.name
-          .split(' ')
-          .map((n) => n[0])
-          .join('')
-          .toUpperCase()
-          .slice(0, 2)
-      : 'U';
-
-    authNavContainer.innerHTML = `
-      <div class="user-profile-header">
-        <button id="btnHeaderETicket" class="btn-inbox-badge" title="Lihat E-Ticket Riwayat Booking">
-          ${ticketBadgeLabel}
-        </button>
-        <div class="user-badge" title="${user.email}">
-          <span class="user-avatar">${initials}</span>
-          <div class="user-info d-none-mobile">
-            <span class="user-name">${user.name}</span>
-            <span class="user-role">Member Eksklusif</span>
-          </div>
-        </div>
-        <button id="btnLogout" class="btn btn-logout" title="Keluar dari akun">
-          Keluar
-        </button>
-      </div>
-    `;
-
-    // Pasang listener ke tombol E-Ticket di header
-    const btnHeaderETicket = document.getElementById('btnHeaderETicket');
-    if (btnHeaderETicket) {
-      btnHeaderETicket.addEventListener('click', () => {
-        openETicketHistory();
-      });
+    if (e.key === null || e.key === 'oasis_properties_db') {
+      renderHeroFeature();
+      renderCatalog(!!user);
     }
-
-    const btnLogout = document.getElementById('btnLogout');
-    if (btnLogout) {
-      btnLogout.addEventListener('click', () => {
-        if (confirm('Apakah Anda yakin ingin keluar?')) {
-          OasisDB.logout();
-          window.location.reload();
-        }
-      });
+    if (e.key === null || e.key === 'oasis_testimonials_db' || e.key === 'oasis_users_db') {
+      renderTestimonials();
     }
-  } else {
-    // Sembunyikan link E-Ticket di navbar saat guest belum login
-    if (navETicketLink) {
-      navETicketLink.style.display = 'none';
+    if (user && (e.key === null || e.key === 'oasis_booking_history' || e.key === 'oasis_users_db')) {
+      renderHeaderAuthState(user);
     }
-
-    authNavContainer.innerHTML = `
-      <a href="login.html" class="btn btn-primary nav-login-btn">LOGIN</a>
-    `;
-  }
+  });
 }
 
 /**
- * 2. Render Katalog Properti
- * - Jika Guest: Hanya tampilkan produk bertanda Best Seller secara bersih (tanpa kartu locked dan tanpa tulisan login).
- * - Jika User: Tampilkan seluruh katalog 6 properti dengan ringkasan spesifikasi.
+ * 1. Navbar auth state: LOGIN button, or member badge + e-tickets + logout
+ */
+function renderHeaderAuthState(user) {
+  const authNavContainer = document.getElementById('authNavContainer');
+  if (!authNavContainer) return;
+
+  // Mobile quick bar account button mirrors the header
+  const quickbarLabel = document.getElementById('quickbarAccountLabel');
+  const quickbarCount = document.getElementById('quickbarTicketCount');
+
+  if (!user) {
+    authNavContainer.innerHTML = `
+      <a href="login.html" class="btn btn-primary nav-login-btn">LOGIN</a>
+    `;
+    if (quickbarLabel) quickbarLabel.textContent = 'Log In';
+    if (quickbarCount) quickbarCount.hidden = true;
+    return;
+  }
+
+  const ticketCount = OasisDB.getBookingsForUser(user).length;
+  const ticketBadgeLabel = ticketCount > 0 ? `E-Tickets (${ticketCount})` : 'E-Tickets';
+  if (quickbarLabel) quickbarLabel.textContent = 'E-Tickets';
+  if (quickbarCount) {
+    quickbarCount.textContent = ticketCount;
+    quickbarCount.hidden = ticketCount === 0;
+  }
+
+  authNavContainer.innerHTML = `
+    <div class="user-profile-header">
+      <button id="btnHeaderETicket" class="btn-inbox-badge" title="View your e-tickets and bookings">
+        ${ticketBadgeLabel}
+      </button>
+      <div class="user-badge" title="${esc(user.email)}">
+        <span class="user-avatar">${esc(OasisUtils.initials(user.name))}</span>
+        <div class="user-info d-none-mobile">
+          <span class="user-name">${esc(user.name)}</span>
+          <span class="user-role">Exclusive Member</span>
+        </div>
+      </div>
+      <button id="btnLogout" class="btn btn-logout" title="Log out of your account">
+        Log Out
+      </button>
+    </div>
+  `;
+
+  document.getElementById('btnHeaderETicket').addEventListener('click', () => {
+    openETicketHistory();
+  });
+
+  document.getElementById('btnLogout').addEventListener('click', () => {
+    if (confirm('Are you sure you want to log out?')) {
+      OasisDB.logout();
+      window.location.reload();
+    }
+  });
+}
+
+/**
+ * 2. Hero floating card: highlights the first Best Seller in the catalog
+ */
+function renderHeroFeature() {
+  const card = document.getElementById('heroFeatureCard');
+  if (!card) return;
+
+  const properties = OasisDB.getProperties();
+  const featured = properties.find((p) => p.isBestSeller) || properties[0];
+  if (!featured) {
+    card.style.display = 'none';
+    return;
+  }
+
+  if (featured.image) {
+    document.getElementById('heroFeatureThumb').style.backgroundImage = `url("${OasisUtils.cssUrl(featured.image)}")`;
+  }
+  setText('heroFeatureTitle', featured.title);
+}
+
+/**
+ * 3. Property catalog
+ * - Everyone sees every villa, Best Sellers first.
+ * - Members also get a quick spec summary and the Details pop-up.
  */
 function renderCatalog(isAuth) {
   const catalogGrid = document.getElementById('estateCatalogGrid');
   const catalogSectionSub = document.getElementById('catalogSubtitle');
   if (!catalogGrid) return;
 
-  const itemsToRender = isAuth
-    ? [...OASIS_ESTATES].sort((a, b) => (b.isBestSeller ? 1 : 0) - (a.isBestSeller ? 1 : 0))
-    : OASIS_ESTATES.filter((item) => item.isBestSeller);
+  const itemsToRender = catalogProperties();
 
   if (catalogSectionSub) {
     catalogSectionSub.innerHTML = isAuth
-      ? 'Seluruh <strong>6 Koleksi Kediaman Mewah</strong> terbuka untuk Anda. Klik <em>Details</em> untuk melihat spesifikasi kamar, kamar mandi, dan fasilitas lengkap.'
-      : 'Koleksi hunian eksklusif pilihan dengan nilai arsitektur dan prestise tertinggi.';
+      ? `All <strong>${plural(itemsToRender.length, 'private villa')}</strong> ${itemsToRender.length === 1 ? 'is' : 'are'} open to you. Click <em>Details</em> to see bedrooms, bathrooms, facilities and nightly rates.`
+      : `<strong>${plural(itemsToRender.length, 'private villa')}</strong> across Bali, available by the night. Press <em>Book</em> on any of them.`;
   }
 
-  let html = itemsToRender
+  if (itemsToRender.length === 0) {
+    catalogGrid.innerHTML = `<p class="estate-empty">Our private collection is being refreshed. Please check back soon.</p>`;
+    return;
+  }
+
+  catalogGrid.innerHTML = itemsToRender
     .map((item) => {
-      const bestSellerBadge = item.isBestSeller
-        ? `<span class="badge-best-seller">★ BEST SELLER</span>`
-        : '';
-
+      const bestSellerBadge = item.isBestSeller ? `<span class="badge-best-seller">★ BEST SELLER</span>` : '';
       const tagClass = item.isBestSeller ? 'estate-tag tag-gold' : 'estate-tag';
+      const tagBadge = item.tag ? `<span class="${tagClass}">${esc(item.tag)}</span>` : '';
 
-      // Ringkasan singkat spesifikasi hanya tampil setelah login
+      // Quick spec summary is for members only
       const specsSummary = isAuth
         ? `
         <div class="estate-specs-quick">
-          <span>🛏️ ${item.bedrooms} Kamar</span>
-          <span>🚿 ${item.bathrooms} Kamar Mandi</span>
-          <span>📐 ${item.area.split(' ')[0]} sq ft</span>
+          <span>🛏️ ${esc(plural(item.bedrooms, 'Bedroom'))}</span>
+          <span>🚿 ${esc(plural(item.bathrooms, 'Bathroom'))}</span>
+          <span>📐 ${esc(shortArea(item.area))}</span>
         </div>
       `
-        : ''; // Sebelum login: tidak ada tulisan 'login untuk spesifikasi detail'
+        : '';
 
+      // AOS animates the wrapper so the card's hover lift still works
       return `
-        <article class="estate-card ${item.isBestSeller ? 'card-best-seller' : ''}" data-aos="fade-up">
-          <div class="estate-image" style="background-image: url('${item.image}');">
+        <div class="estate-item" data-aos="fade-up">
+        <article class="estate-card ${item.isBestSeller ? 'card-best-seller' : ''}">
+          <div class="estate-image" style="background-image: url('${esc(OasisUtils.cssUrl(item.image))}');">
             <div class="estate-badges">
               ${bestSellerBadge}
-              <span class="${tagClass}">${item.tag}</span>
+              ${tagBadge}
             </div>
           </div>
           <div class="estate-content">
             <div class="estate-top">
-              <h3 class="serif">${item.title}</h3>
+              <h3 class="serif">${esc(item.title)}</h3>
             </div>
-            
+
             ${specsSummary}
 
             <div class="estate-meta">
-              <span class="location">${item.location}</span>
-              <span class="price-tag">${item.price}</span>
+              <span class="location">${esc(item.location)}</span>
+              <span class="price-tag">${nightlyRateHtml(item.nightlyRate)}</span>
             </div>
-            <button type="button" class="details-link-btn" data-estate-id="${item.id}">
-              Details →
-            </button>
+            <div class="estate-actions">
+              <button type="button" class="details-link-btn" data-estate-id="${esc(item.id)}">
+                Details →
+              </button>
+              <button type="button" class="reserve-link-btn" data-reserve-id="${esc(item.id)}">
+                ${WHATSAPP_ICON} Book
+              </button>
+            </div>
           </div>
         </article>
+        </div>
       `;
     })
     .join('');
 
-  catalogGrid.innerHTML = html;
-
-  // Bind event listener ke tombol Details
-  document.querySelectorAll('.details-link-btn').forEach((btn) => {
+  catalogGrid.querySelectorAll('.details-link-btn').forEach((btn) => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
-      const estateId = btn.getAttribute('data-estate-id');
-      handleDetailClick(estateId, isAuth);
+      handleDetailClick(btn.getAttribute('data-estate-id'));
     });
+  });
+
+  // Reserving is open to everyone, guests included
+  catalogGrid.querySelectorAll('.reserve-link-btn').forEach((btn) => {
+    btn.addEventListener('click', () => openReserveModal(btn.getAttribute('data-reserve-id')));
+  });
+}
+
+// Every villa, Best Sellers first; sort is stable, so the admin's order is kept inside each group
+function catalogProperties() {
+  return [...OasisDB.getProperties()].sort((a, b) => (b.isBestSeller ? 1 : 0) - (a.isBestSeller ? 1 : 0));
+}
+
+/**
+ * 4. Details button: guests are sent to the login page
+ */
+function handleDetailClick(estateId) {
+  requireMember('Villa details', () => {
+    const estate = OasisDB.getPropertyById(estateId);
+    if (estate) openPropertyDetailModal(estate);
   });
 }
 
 /**
- * 3. Logika Klik Tombol Details Properti
- * Jika belum login, langsung diarahkan ke halaman login
+ * 5. Main feature buttons: guests are sent to the login page
+ * ("View Full Catalog" is a plain #residences link, open to everyone)
  */
-function handleDetailClick(estateId, isAuth) {
-  if (!isAuth) {
-    window.location.href = 'login.html?reason=auth_required&feature=Detail+Spesifikasi+Properti';
-    return;
-  }
-
-  const estate = OASIS_ESTATES.find((item) => item.id === estateId);
-  if (!estate) return;
-
-  openPropertyDetailModal(estate);
-}
-
-/**
- * 4. Pasang Interaksi pada Tombol-Tombol Fitur Utama
- * Jika belum login, langsung diarahkan ke halaman login
- */
-function setupFeatureButtons(isAuth, currentUser) {
-  // Tombol 1: "Lihat Semua Katalog" di Hero
-  const btnExploreCatalog = document.getElementById('btnExploreCatalog');
-  if (btnExploreCatalog) {
-    btnExploreCatalog.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (!isAuth) {
-        window.location.href = 'login.html?reason=auth_required&feature=Lihat+Semua+Katalog';
-      } else {
-        const targetSection = document.getElementById('residences');
-        if (targetSection) {
-          targetSection.scrollIntoView({ behavior: 'smooth' });
-        }
-      }
-    });
-  }
-
-  // Tombol 2: "Book a Meeting" di Hero
+function setupFeatureButtons() {
+  // "Book a Meeting" in the hero
   const btnBookMeeting = document.getElementById('btnBookMeeting');
   if (btnBookMeeting) {
     btnBookMeeting.addEventListener('click', (e) => {
       e.preventDefault();
-      if (!isAuth) {
-        window.location.href = 'login.html?reason=auth_required&feature=Book+a+Meeting';
-      } else {
-        openBookMeetingModal(currentUser);
-      }
+      requireMember('Book a Meeting', (user) => openBookMeetingModal(user));
     });
   }
 
-  // Tombol 3: "Schedule a Viewing" di Banner
+  // "Schedule a Viewing" in the banner
   const btnScheduleViewing = document.getElementById('btnScheduleViewing');
   if (btnScheduleViewing) {
     btnScheduleViewing.addEventListener('click', (e) => {
       e.preventDefault();
-      if (!isAuth) {
-        window.location.href = 'login.html?reason=auth_required&feature=Schedule+a+Viewing';
-      } else {
-        openScheduleViewingModal(null, currentUser);
-      }
+      requireMember('Schedule a Viewing', (user) => openScheduleViewingModal(null, user));
     });
   }
 }
 
+// Runs a members-only action with the member who is signed in *now* (the session may have
+// ended in another tab or been reset by the admin), or sends guests to the login page.
+function requireMember(feature, action) {
+  const user = OasisDB.getCurrentUser();
+  if (!user) {
+    window.location.href = `login.html?reason=auth_required&feature=${encodeURIComponent(feature)}`;
+    return;
+  }
+  action(user);
+}
+
 /**
- * 5. Pengelolaan Modal (Book Meeting, Schedule Viewing, Detail Properti, Pop-up Sukses, Email Konfirmasi)
+ * WhatsApp reservations, open to everyone. OASIS uses wa.me click-to-chat links, so no API key
+ * is needed: WhatsApp opens a chat with the admin number and the request already typed in,
+ * and the guest presses Send.
+ */
+const MAX_RESERVATION_NIGHTS = 365;
+const MAX_RESERVATION_GUESTS = 30;
+
+function whatsappUrl(message) {
+  return `https://wa.me/${OASIS_CONTACT.whatsapp}?text=${encodeURIComponent(message)}`;
+}
+
+function validateReservation({ property, checkIn, checkOut, guests, name }) {
+  if (!property) return 'Please choose a villa.';
+  if (!checkIn || !checkOut) return 'Please choose your check-in and check-out dates.';
+  if (checkIn < OasisUtils.baliTodayISO()) return 'That check-in date has already passed in Bali. Please choose another date.';
+  const nights = OasisUtils.nightsBetween(checkIn, checkOut);
+  if (nights < 1) return 'Check-out must be at least one day after check-in.';
+  if (nights > MAX_RESERVATION_NIGHTS) return `Please choose a stay of ${MAX_RESERVATION_NIGHTS} nights or fewer.`;
+  if (!Number.isInteger(guests) || guests < 1 || guests > MAX_RESERVATION_GUESTS) {
+    return `Please enter between 1 and ${MAX_RESERVATION_GUESTS} guests.`;
+  }
+  if (!name) return 'Please enter your name.';
+  return '';
+}
+
+// The message the guest sends to the admin on WhatsApp
+function buildReservationMessage({ property, checkIn, checkOut, guests, name, note, memberEmail }) {
+  const nights = OasisUtils.nightsBetween(checkIn, checkOut);
+  const rate = Number(property.nightlyRate) || 0;
+  const lines = [
+    '*OASIS Villa Reservation Request*',
+    '',
+    `Villa: ${property.title} (${property.location})`,
+    `Rooms: ${plural(property.bedrooms, 'bedroom')} · ${plural(property.bathrooms, 'bathroom')}`,
+    `Check-in: ${OasisUtils.formatDateShort(checkIn)}`,
+    `Check-out: ${OasisUtils.formatDateShort(checkOut)}`,
+    `Length of stay: ${plural(nights, 'night')}`,
+    `Guests: ${guests}`,
+    `Nightly rate: ${OasisUtils.formatNightlyRate(rate)}`
+  ];
+  if (rate > 0) lines.push(`Estimated total: ${OasisUtils.formatIdr(rate * nights)}`);
+  lines.push('', `Name: ${name}`);
+  if (memberEmail) lines.push(`OASIS member: ${memberEmail}`);
+  if (note) lines.push(`Special requests: ${note}`);
+  lines.push('', 'Is this villa available for these dates? Thank you.');
+  return lines.join('\n');
+}
+
+// Follow-up for a meeting or viewing booked on the website, quoting its reference number
+function buildBookingWhatsAppMessage(booking) {
+  const isViewing = booking.type === 'viewing';
+  return [
+    `Hello OASIS, I have just ${isViewing ? 'scheduled a villa viewing' : 'booked a meeting'} on your website.`,
+    '',
+    `Reference: ${booking.refNo}`,
+    isViewing ? `Villa: ${booking.property}` : `Consultation: ${booking.topic}`,
+    `Date: ${bookingDateLabel(booking)}`,
+    `Time: ${booking.time}`,
+    `Name: ${booking.name}`,
+    '',
+    'Please confirm my booking. Thank you.'
+  ].join('\n');
+}
+
+function setupReservations() {
+  document.querySelectorAll('[data-open-reserve]').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openReserveModal(btn.getAttribute('data-open-reserve'));
+    });
+  });
+
+  const form = document.getElementById('formReserve');
+  if (!form) return;
+
+  document.getElementById('rsCheckIn').addEventListener('change', () => {
+    syncReserveCheckOut();
+    updateReserveSummary();
+  });
+  ['rsVilla', 'rsCheckOut'].forEach((id) => document.getElementById(id).addEventListener('change', updateReserveSummary));
+  // Typed dates fire "input" before the picker's "change"
+  ['rsCheckIn', 'rsCheckOut'].forEach((id) => document.getElementById(id).addEventListener('input', updateReserveSummary));
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const user = OasisDB.getCurrentUser();
+    const villaId = document.getElementById('rsVilla').value;
+    const request = {
+      property: OasisDB.getPropertyById(villaId),
+      checkIn: document.getElementById('rsCheckIn').value,
+      checkOut: document.getElementById('rsCheckOut').value,
+      guests: Number(document.getElementById('rsGuests').value),
+      name: document.getElementById('rsName').value.trim(),
+      note: document.getElementById('rsNote').value.trim(),
+      memberEmail: user ? user.email : ''
+    };
+
+    const error = validateReservation(request);
+    if (error) {
+      showFormError('rsError', error);
+      return;
+    }
+    showFormError('rsError', '');
+
+    const message = buildReservationMessage(request);
+    const url = whatsappUrl(message);
+    window.open(url, '_blank', 'noopener');
+    showReservationReady(message, url);
+  });
+}
+
+function openReserveModal(preselectedId) {
+  const modal = document.getElementById('reserveModal');
+  if (!modal) return;
+
+  const user = OasisDB.getCurrentUser();
+  const villas = catalogProperties();
+  const select = document.getElementById('rsVilla');
+  const keep = preselectedId || select.value;
+  select.innerHTML = villas.length
+    ? `<option value="">Choose a villa…</option>` +
+      villas
+        .map((p) => `<option value="${esc(p.id)}">${esc(p.title)} (${esc(p.location)} – ${esc(OasisUtils.formatNightlyRate(p.nightlyRate))})</option>`)
+        .join('')
+    : '<option value="">No villas available right now</option>';
+  if (villas.some((p) => p.id === keep)) select.value = keep;
+
+  const nameInput = document.getElementById('rsName');
+  if (user && !nameInput.value) nameInput.value = user.name;
+
+  const checkIn = document.getElementById('rsCheckIn');
+  checkIn.min = OasisUtils.baliTodayISO();
+  if (checkIn.value && checkIn.value < checkIn.min) checkIn.value = '';
+  syncReserveCheckOut();
+  updateReserveSummary();
+  showFormError('rsError', '');
+
+  openModal(modal);
+}
+
+// Check-out is at least one night after check-in; moves forward when check-in passes it
+function syncReserveCheckOut() {
+  const checkIn = document.getElementById('rsCheckIn').value;
+  const checkOut = document.getElementById('rsCheckOut');
+  const earliest = OasisUtils.addDaysISO(checkIn || OasisUtils.baliTodayISO(), 1);
+  checkOut.min = earliest;
+  if (checkIn && (!checkOut.value || checkOut.value < earliest)) checkOut.value = earliest;
+}
+
+function updateReserveSummary() {
+  const summary = document.getElementById('rsSummary');
+  if (!summary) return;
+
+  const property = OasisDB.getPropertyById(document.getElementById('rsVilla').value);
+  const nights = OasisUtils.nightsBetween(document.getElementById('rsCheckIn').value, document.getElementById('rsCheckOut').value);
+  if (!property || nights < 1) {
+    summary.innerHTML = '<span>Choose a villa and your dates to see the estimated total.</span>';
+    return;
+  }
+
+  const rate = Number(property.nightlyRate) || 0;
+  summary.innerHTML =
+    rate > 0
+      ? `<span>Estimated total · ${esc(plural(nights, 'night'))} × ${esc(OasisUtils.formatIdr(rate))}</span><strong>${esc(OasisUtils.formatIdr(rate * nights))}</strong>`
+      : `<span>${esc(plural(nights, 'night'))}</span><strong>Rate on request</strong>`;
+}
+
+function showReservationReady(message, url) {
+  closeAllModals();
+  setText('rsPreview', message);
+  document.getElementById('rsOpenWhatsApp').href = url;
+  openModal(document.getElementById('reserveReadyModal'));
+}
+
+/**
+ * Concierge (customer service): the floating help button opens a panel with answers about
+ * OASIS and this website, plus quick ways to book or to ask the team on WhatsApp.
+ */
+function setupConcierge() {
+  const fab = document.getElementById('csFab');
+  const panel = document.getElementById('csPanel');
+  if (!fab || !panel) return;
+
+  document.getElementById('csAskWhatsApp').href = whatsappUrl('Hello OASIS, I have a question about your villas:\n\n');
+
+  fab.addEventListener('click', () => (panel.hidden ? openConcierge() : closeConcierge(true)));
+  document.getElementById('csClose').addEventListener('click', () => closeConcierge(true));
+  document.getElementById('csBookStay').addEventListener('click', () => {
+    closeConcierge(true);
+    openReserveModal('');
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !panel.hidden && !document.querySelector('.modal-overlay.active')) closeConcierge(true);
+  });
+  document.addEventListener('click', (e) => {
+    if (!panel.hidden && !panel.contains(e.target) && !fab.contains(e.target)) closeConcierge(false);
+  });
+}
+
+function openConcierge() {
+  const panel = document.getElementById('csPanel');
+  renderConciergeFacts();
+  panel.hidden = false;
+  document.getElementById('csFab').setAttribute('aria-expanded', 'true');
+  panel.focus({ preventScroll: true });
+}
+
+function closeConcierge(returnFocus) {
+  const panel = document.getElementById('csPanel');
+  const fab = document.getElementById('csFab');
+  if (!panel || panel.hidden) return;
+  panel.hidden = true;
+  fab.setAttribute('aria-expanded', 'false');
+  if (returnFocus) fab.focus({ preventScroll: true });
+}
+
+// Answers that depend on the live catalog (the admin can change villas and rates)
+function renderConciergeFacts() {
+  const villas = OasisDB.getProperties();
+  const locations = [...new Set(villas.map((p) => String(p.location || '').trim()).filter(Boolean))];
+  if (villas.length) {
+    setText('csVillaSummary', `${plural(villas.length, 'villa')}${locations.length ? ` in ${joinList(locations)}` : ''}`);
+  }
+
+  const rates = villas.map((p) => Number(p.nightlyRate) || 0).filter((rate) => rate > 0);
+  const low = Math.min(...rates);
+  const high = Math.max(...rates);
+  setText(
+    'csRateRange',
+    rates.length === 0
+      ? 'Nightly rates are available on request.'
+      : low === high
+        ? `Our villas are ${OasisUtils.formatIdr(low)} per night.`
+        : `Nightly rates run from ${OasisUtils.formatIdr(low)} to ${OasisUtils.formatIdr(high)}, depending on the villa and its facilities.`
+  );
+}
+
+// ["Ubud", "Canggu", "Seminyak"] -> "Ubud, Canggu and Seminyak"
+function joinList(items) {
+  return items.length < 2 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`;
+}
+
+// Points a "Confirm on WhatsApp" link at the admin chat for this booking
+function setBookingWhatsAppLink(linkId, booking) {
+  const link = document.getElementById(linkId);
+  if (link) link.href = whatsappUrl(buildBookingWhatsAppMessage(booking));
+}
+
+/**
+ * Guest testimonials: published reviews, newest first. Members can add and delete their own.
+ */
+const TESTIMONIALS_INITIAL = 6;
+const RATING_WORDS = { 1: 'Poor', 2: 'Fair', 3: 'Good', 4: 'Very good', 5: 'Exceptional' };
+let showAllTestimonials = false;
+
+function renderTestimonials({ animate = false } = {}) {
+  const grid = document.getElementById('testimonialGrid');
+  const btnShowAll = document.getElementById('btnShowAllReviews');
+  if (!grid) return;
+
+  const currentUser = OasisDB.getCurrentUser();
+  const reviews = OasisDB.getPublishedTestimonials();
+  const visible = showAllTestimonials ? reviews : reviews.slice(0, TESTIMONIALS_INITIAL);
+
+  if (btnShowAll) {
+    btnShowAll.hidden = reviews.length <= TESTIMONIALS_INITIAL;
+    btnShowAll.textContent = showAllTestimonials ? 'Show fewer reviews' : `Show all ${reviews.length} reviews`;
+  }
+
+  if (visible.length === 0) {
+    grid.innerHTML = `<p class="estate-empty">No reviews yet. Be the first to share your stay.</p>`;
+    return;
+  }
+
+  grid.innerHTML = visible
+    .map((t, idx) => {
+      const rating = Math.min(5, Math.max(1, Math.round(Number(t.rating) || 5)));
+      const isOwn = !!currentUser && t.userId === currentUser.id;
+      // Only the first render animates; later re-renders must never start hidden
+      const aos = animate ? ` data-aos="fade-up" data-aos-delay="${Math.min(idx, 2) * 100 + 100}"` : '';
+      const place = t.city ? `<small>${esc(t.city)}</small>` : '';
+      const stay = `${esc(t.villa)} &bull; ${esc(plural(t.nights, 'night')).replace(' ', '&nbsp;')}`;
+
+      return `
+        <div class="testimonial-item"${aos}>
+        <figure class="testimonial-card${isOwn ? ' is-own' : ''}" data-review-id="${esc(t.id)}">
+          <div class="testimonial-top">
+            <div class="testimonial-stars" role="img" aria-label="Rated ${rating} out of 5">${'★'.repeat(rating)}<span class="star-off">${'★'.repeat(5 - rating)}</span></div>
+            ${isOwn ? '<span class="testimonial-own-badge">Your review</span>' : ''}
+          </div>
+          <blockquote class="testimonial-quote">${esc(t.text)}</blockquote>
+          <figcaption class="testimonial-author">
+            <span class="testimonial-avatar" aria-hidden="true">${esc(OasisUtils.initials(t.name))}</span>
+            <span>
+              <strong>${esc(t.name)}</strong>
+              ${place}
+              <small>${stay}</small>
+            </span>
+          </figcaption>
+          ${isOwn ? `<button type="button" class="testimonial-delete" data-delete-review="${esc(t.id)}">Delete my review</button>` : ''}
+        </figure>
+        </div>
+      `;
+    })
+    .join('');
+}
+
+function setupTestimonials() {
+  const btnShare = document.getElementById('btnShareStay');
+  if (btnShare) {
+    btnShare.addEventListener('click', () => {
+      requireMember('Sharing your stay', (user) => openReviewModal(user));
+    });
+  }
+
+  const btnShowAll = document.getElementById('btnShowAllReviews');
+  if (btnShowAll) {
+    btnShowAll.addEventListener('click', () => {
+      showAllTestimonials = !showAllTestimonials;
+      renderTestimonials();
+    });
+  }
+
+  // Members can delete their own review
+  const grid = document.getElementById('testimonialGrid');
+  if (grid) {
+    grid.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-delete-review]');
+      if (!btn) return;
+      const user = OasisDB.getCurrentUser();
+      const review = OasisDB.getTestimonials().find((t) => t.id === btn.getAttribute('data-delete-review'));
+      if (!user || !review || review.userId !== user.id) return;
+      if (!confirm('Delete your review? This cannot be undone.')) return;
+      const deleted = OasisDB.deleteTestimonial(review.id);
+      renderTestimonials();
+      showToast(deleted ? 'Your review has been deleted.' : 'Your review could not be deleted. Please try again.');
+    });
+  }
+
+  // Star rating: light up to the hovered / chosen star
+  const stars = document.getElementById('rvStars');
+  if (stars) {
+    const chosen = () => {
+      const checked = stars.querySelector('input:checked');
+      return checked ? Number(checked.value) : 0;
+    };
+    const show = (value) => {
+      stars.setAttribute('data-show', String(value));
+      document.getElementById('rvStarsText').textContent = RATING_WORDS[value] || '';
+    };
+    stars.addEventListener('change', () => show(chosen()));
+    stars.querySelectorAll('label').forEach((label) => {
+      label.addEventListener('mouseenter', () => show(Number(document.getElementById(label.htmlFor).value)));
+    });
+    stars.addEventListener('mouseleave', () => show(chosen()));
+  }
+
+  // Live character counter
+  const text = document.getElementById('rvText');
+  if (text) {
+    text.addEventListener('input', updateReviewCounter);
+  }
+
+  const form = document.getElementById('formReview');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const user = OasisDB.getCurrentUser();
+      if (!user) {
+        window.location.href = 'login.html?reason=auth_required&feature=Sharing+your+stay';
+        return;
+      }
+
+      const checked = form.querySelector('input[name="rvRating"]:checked');
+      const result = OasisDB.addTestimonial({
+        userId: user.id,
+        rating: checked ? Number(checked.value) : 0,
+        propertyId: document.getElementById('rvVilla').value,
+        nights: Number(document.getElementById('rvNights').value),
+        text: document.getElementById('rvText').value,
+        name: document.getElementById('rvName').value,
+        city: document.getElementById('rvCity').value
+      });
+
+      if (!result.success) {
+        showFormError('rvError', result.message);
+        return;
+      }
+
+      closeAllModals();
+      form.reset();
+      showAllTestimonials = false;
+      renderTestimonials();
+      showToast(result.message);
+
+      const card = document.querySelector(`[data-review-id="${result.testimonial.id}"]`);
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }
+}
+
+function openReviewModal(currentUser) {
+  const modal = document.getElementById('reviewModal');
+  if (!modal) return;
+
+  const properties = OasisDB.getProperties();
+  document.getElementById('rvVilla').innerHTML = properties.length
+    ? `<option value="">Choose a villa…</option>` + properties.map((p) => `<option value="${esc(p.id)}">${esc(p.title)}</option>`).join('')
+    : '<option value="">No villas available right now</option>';
+
+  const nameInput = document.getElementById('rvName');
+  if (currentUser && !nameInput.value) nameInput.value = OasisUtils.shortName(currentUser.name);
+
+  // Default to 5 stars when nothing is chosen yet
+  const stars = document.getElementById('rvStars');
+  if (!stars.querySelector('input:checked')) document.getElementById('rvRating5').checked = true;
+  const chosen = Number(stars.querySelector('input:checked').value);
+  stars.setAttribute('data-show', String(chosen));
+  document.getElementById('rvStarsText').textContent = RATING_WORDS[chosen];
+
+  updateReviewCounter();
+  showFormError('rvError', '');
+  openModal(modal);
+}
+
+function updateReviewCounter() {
+  const length = document.getElementById('rvText').value.trim().length;
+  const counter = document.getElementById('rvTextCount');
+  counter.textContent = `${length} / 500 characters (minimum 20)`;
+  counter.classList.toggle('is-short', length > 0 && length < 20);
+}
+
+/**
+ * Mobile & tablet navigation: hamburger menu (≤ 980px) and quick-action bar (≤ 720px)
+ */
+function setupMobileNav() {
+  const header = document.querySelector('.site-header');
+  const toggle = document.getElementById('navToggle');
+  if (!header || !toggle) return;
+
+  const setOpen = (open) => {
+    header.classList.toggle('nav-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  };
+
+  toggle.addEventListener('click', () => setOpen(!header.classList.contains('nav-open')));
+
+  // Close after choosing a link or an account action, on Esc, on an outside click,
+  // and when the screen grows back to desktop size
+  document.querySelectorAll('.nav-menu a').forEach((link) => link.addEventListener('click', () => setOpen(false)));
+  document.getElementById('authNavContainer').addEventListener('click', (e) => {
+    if (e.target.closest('a, button')) setOpen(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setOpen(false);
+  });
+  document.addEventListener('click', (e) => {
+    if (header.classList.contains('nav-open') && !header.contains(e.target)) setOpen(false);
+  });
+  const desktop = window.matchMedia('(min-width: 981px)');
+  const onResize = (e) => {
+    if (e.matches) setOpen(false);
+  };
+  if (desktop.addEventListener) desktop.addEventListener('change', onResize);
+  else desktop.addListener(onResize);
+}
+
+function setupMobileQuickbar() {
+  const bar = document.getElementById('mobileQuickbar');
+  if (!bar) return;
+
+  bar.addEventListener('click', (e) => {
+    const item = e.target.closest('[data-quick]');
+    if (!item) return;
+
+    switch (item.getAttribute('data-quick')) {
+      case 'meeting':
+        requireMember('Book a Meeting', (user) => openBookMeetingModal(user));
+        break;
+      case 'viewing':
+        requireMember('Schedule a Viewing', (user) => openScheduleViewingModal(null, user));
+        break;
+      case 'account':
+        if (OasisDB.getCurrentUser()) openETicketHistory();
+        else window.location.href = 'login.html';
+        break;
+      default:
+        // "Villas" and "Reviews" are plain anchor links
+        break;
+    }
+  });
+}
+
+let toastTimer = null;
+function showToast(message) {
+  const toast = document.getElementById('siteToast');
+  if (!toast) return;
+  toast.textContent = message;
+  toast.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toast.hidden = true;
+  }, 3200);
+}
+
+/**
+ * 6. Modals (Book Meeting, Schedule Viewing, Property Detail, success pop-ups, confirmation email)
  */
 function setupModals() {
-  // Setup tombol close pada seluruh modal
-  document.querySelectorAll('.modal-overlay .modal-close').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      closeAllModals();
-    });
+  // Close buttons
+  document.querySelectorAll('.modal-overlay .modal-close, .modal-close-trigger').forEach((btn) => {
+    btn.addEventListener('click', closeAllModals);
   });
 
-  // Tombol class modal-close-trigger
-  document.querySelectorAll('.modal-close-trigger').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      closeAllModals();
-    });
-  });
-
-  // Klik di luar modal dialog untuk menutup
+  // Click outside the dialog to close
   document.querySelectorAll('.modal-overlay').forEach((overlay) => {
     overlay.addEventListener('click', (e) => {
       if (e.target === overlay) {
@@ -408,11 +827,52 @@ function setupModals() {
     });
   });
 
-  // Form submit Book Meeting
+  // Esc closes any open modal; Tab stays inside it
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.querySelector('.modal-overlay.active')) {
+      closeAllModals();
+    } else if (e.key === 'Tab') {
+      trapFocus(e);
+    }
+  });
+
+  // Dialog semantics for screen readers
+  document.querySelectorAll('.modal-overlay .modal-dialog').forEach((dialog, i) => {
+    dialog.setAttribute('role', 'dialog');
+    dialog.setAttribute('aria-modal', 'true');
+    dialog.setAttribute('tabindex', '-1');
+    const title = dialog.querySelector('.modal-title, .pd-title');
+    if (title) {
+      if (!title.id) title.id = `modalTitle${i}`;
+      dialog.setAttribute('aria-labelledby', title.id);
+    } else {
+      dialog.setAttribute('aria-label', 'Confirmation email');
+    }
+  });
+
+  // Grey out sessions that have already started today (Bali time)
+  [
+    ['bmDate', 'bmTime'],
+    ['svDate', 'svTimeSlot']
+  ].forEach(([dateId, slotId]) => {
+    const dateInput = document.getElementById(dateId);
+    if (dateInput) {
+      // "input" covers typing a date, "change" covers the date picker
+      ['input', 'change'].forEach((evt) => dateInput.addEventListener(evt, () => updateSlotAvailability(dateId, slotId)));
+    }
+  });
+
+  // Book Meeting submit
   const formBookMeeting = document.getElementById('formBookMeeting');
   if (formBookMeeting) {
     formBookMeeting.addEventListener('submit', (e) => {
       e.preventDefault();
+
+      const currentUser = OasisDB.getCurrentUser();
+      if (!currentUser) {
+        window.location.href = 'login.html?reason=auth_required&feature=Book+a+Meeting';
+        return;
+      }
 
       const name = document.getElementById('bmName').value.trim();
       const email = document.getElementById('bmEmail').value.trim();
@@ -421,148 +881,136 @@ function setupModals() {
       const topicSelect = document.getElementById('bmTopic');
       const topic = topicSelect.options[topicSelect.selectedIndex].text;
 
-      // Buat Nomor Referensi Unik
-      const refNo = 'OASIS-MTG-' + Math.floor(10000 + Math.random() * 90000);
-
-      // Format tanggal yang elegan
-      let formattedDate = date;
-      try {
-        formattedDate = new Date(date).toLocaleDateString('id-ID', {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        });
-      } catch (err) {
-        formattedDate = date;
+      if (!name || !email) {
+        showFormError('bmError', 'Please enter your name and email address.');
+        return;
       }
+      const scheduleError = validateSchedule(date, time);
+      if (scheduleError) {
+        showFormError('bmError', scheduleError);
+        return;
+      }
+      showFormError('bmError', '');
 
-      const bookingRecord = {
+      const refNo = OasisDB.generateRefNo('OASIS-MTG');
+      const bookingRecord = OasisDB.addBooking({
         id: refNo,
         refNo,
         type: 'meeting',
-        typeLabel: 'Konsultasi Meeting',
-        title: `Konsultasi: ${topic}`,
+        typeLabel: 'Meeting',
+        title: `Consultation: ${topic}`,
+        userId: currentUser.id,
         name,
         email,
-        date: formattedDate,
+        date: OasisUtils.formatDateLong(date),
         rawDate: date,
         time,
         topic,
         property: topic,
-        guests: '1 Orang (Klien Privat)',
-        advisorOrHost: 'Alexander Wright (Senior Partner, Prime Acquisitions)',
-        createdAt: new Date().toISOString()
-      };
+        guests: '1 Guest (Private Client)',
+        advisorOrHost: OASIS_CONTACT.advisor
+      });
+      if (!bookingRecord) {
+        showFormError('bmError', STORAGE_FULL_MESSAGE);
+        return;
+      }
 
-      // Simpan ke database lokal riwayat booking
-      saveBooking(bookingRecord);
-
-      // 1. Tampilkan Pop-up Notifikasi Booking Berhasil
       showBookingSuccessPopup(bookingRecord);
-
       formBookMeeting.reset();
     });
   }
 
-  // Tombol di dalam Pop-up Booking Success: Buka Surat Konfirmasi Email
+  // "Open Confirmation Email" inside the meeting success pop-up
   const btnViewEmail = document.getElementById('btnViewEmailConfirmation');
   if (btnViewEmail) {
     btnViewEmail.addEventListener('click', () => {
-      closeAllModals();
-      const bookings = getStoredBookings();
-      if (bookings.length > 0) {
-        showEmailConfirmation(bookings[0]);
+      if (lastMeetingBooking) {
+        showEmailConfirmation(lastMeetingBooking);
       }
     });
   }
 
-  // Form submit Schedule Viewing (Simpan E-Ticket ke Riwayat & Tampilkan Pop-up Sesuai Tema OASIS)
+  // Schedule Viewing submit
   const formScheduleViewing = document.getElementById('formScheduleViewing');
   if (formScheduleViewing) {
     formScheduleViewing.addEventListener('submit', (e) => {
       e.preventDefault();
-      const estateSelect = document.getElementById('svEstate');
-      const estateTitle = estateSelect.options[estateSelect.selectedIndex].text;
-      const date = document.getElementById('svDate').value;
-      const timeSlot = document.getElementById('svTimeSlot').value;
-      const name = document.getElementById('svName').value;
-      const email = document.getElementById('svEmail').value;
-      const guests = document.getElementById('svGuests') ? document.getElementById('svGuests').value : '1-2 Orang';
 
-      const vsRefNo = 'OASIS-VISIT-' + Math.floor(10000 + Math.random() * 90000);
-      let formattedDate = date;
-      try {
-        formattedDate = new Date(date).toLocaleDateString('id-ID', {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        });
-      } catch (err) {
-        formattedDate = date;
+      const currentUser = OasisDB.getCurrentUser();
+      if (!currentUser) {
+        window.location.href = 'login.html?reason=auth_required&feature=Schedule+a+Viewing';
+        return;
       }
 
-      const viewingRecord = {
+      const estate = OasisDB.getPropertyById(document.getElementById('svEstate').value);
+      const date = document.getElementById('svDate').value;
+      const timeSlot = document.getElementById('svTimeSlot').value;
+      const name = document.getElementById('svName').value.trim();
+      const email = document.getElementById('svEmail').value.trim();
+      const guests = document.getElementById('svGuests').value;
+
+      if (!estate) {
+        showFormError('svError', 'Please choose a property to view.');
+        return;
+      }
+      if (!name || !email) {
+        showFormError('svError', 'Please enter your name and email address.');
+        return;
+      }
+      const scheduleError = validateSchedule(date, timeSlot);
+      if (scheduleError) {
+        showFormError('svError', scheduleError);
+        return;
+      }
+      showFormError('svError', '');
+
+      const vsRefNo = OasisDB.generateRefNo('OASIS-VISIT');
+      const guestsLabel = `${guests} (Private Chauffeur & Refreshments)`;
+      const viewingRecord = OasisDB.addBooking({
         id: vsRefNo,
         refNo: vsRefNo,
         type: 'viewing',
-        typeLabel: 'Survei Properti',
-        title: `Survei: ${estateTitle}`,
+        typeLabel: 'Villa Viewing',
+        title: `Viewing: ${estate.title}`,
+        userId: currentUser.id,
         name,
         email,
-        date: formattedDate,
+        date: OasisUtils.formatDateLong(date),
         rawDate: date,
         time: timeSlot,
-        topic: `Survei Unit ${estateTitle}`,
-        property: estateTitle,
-        guests: `${guests} (Private Chauffeur & Refreshment)`,
-        advisorOrHost: 'Dedicated VIP Site Host & Private Chauffeur',
-        createdAt: new Date().toISOString()
-      };
-
-      // Simpan E-Ticket survei properti ke database riwayat lokal
-      saveBooking(viewingRecord);
-
-      // Isi data ke modal pop-up konfirmasi survei bertema OASIS
-      const vsRefNoEl = document.getElementById('vsRefNo');
-      if (vsRefNoEl) vsRefNoEl.innerText = vsRefNo;
-
-      const vsPropertyEl = document.getElementById('vsProperty');
-      if (vsPropertyEl) vsPropertyEl.innerText = estateTitle;
-
-      const vsNameEl = document.getElementById('vsName');
-      if (vsNameEl) vsNameEl.innerText = name;
-
-      const vsEmailEl = document.getElementById('vsEmail');
-      if (vsEmailEl) vsEmailEl.innerText = email;
-
-      const vsDateEl = document.getElementById('vsDate');
-      if (vsDateEl) vsDateEl.innerText = formattedDate;
-
-      const vsTimeSlotEl = document.getElementById('vsTimeSlot');
-      if (vsTimeSlotEl) vsTimeSlotEl.innerText = timeSlot;
-
-      const vsGuestsEl = document.getElementById('vsGuests');
-      if (vsGuestsEl) vsGuestsEl.innerText = `${guests} (Private Chauffeur & Refreshment)`;
-
-      const vsBarcodeNumEl = document.getElementById('vsBarcodeNum');
-      if (vsBarcodeNumEl) vsBarcodeNumEl.innerText = `${vsRefNo}-VERIFIED-PASS`;
-
-      closeAllModals();
-      const viewingModal = document.getElementById('viewingSuccessModal');
-      if (viewingModal) {
-        const btnPrintViewing = document.getElementById('btnPrintViewingTicket');
-        if (btnPrintViewing) {
-          btnPrintViewing.onclick = () => {
-            printETicket(document.getElementById('oasisViewingETicket'));
-          };
-        }
-        openModal(viewingModal);
+        topic: `Private viewing of ${estate.title}`,
+        property: estate.title,
+        propertyId: estate.id,
+        guests: guestsLabel,
+        advisorOrHost: 'Dedicated VIP Site Host & Private Chauffeur'
+      });
+      if (!viewingRecord) {
+        showFormError('svError', STORAGE_FULL_MESSAGE);
+        return;
       }
 
-      // Perbarui navbar agar counter E-Ticket langsung bertambah
-      renderHeaderAuthState(OasisDB.getCurrentUser());
+      // Fill the viewing confirmation pop-up
+      setText('vsRefNo', vsRefNo);
+      setText('vsProperty', estate.title);
+      setText('vsName', name);
+      setText('vsEmail', email);
+      setText('vsDate', viewingRecord.date);
+      setText('vsTimeSlot', timeSlot);
+      setText('vsGuests', guestsLabel);
+      setText('vsBarcodeNum', `${vsRefNo}-VERIFIED-PASS`);
+      setBookingWhatsAppLink('btnWhatsAppViewing', viewingRecord);
+
+      closeAllModals();
+      const btnPrintViewing = document.getElementById('btnPrintViewingTicket');
+      if (btnPrintViewing) {
+        btnPrintViewing.onclick = () => {
+          printETicket(document.getElementById('oasisViewingETicket'));
+        };
+      }
+      openModal(document.getElementById('viewingSuccessModal'));
+
+      // Refresh the navbar so the e-ticket counter updates
+      renderHeaderAuthState(currentUser);
 
       formScheduleViewing.reset();
     });
@@ -570,57 +1018,91 @@ function setupModals() {
 }
 
 /**
- * Buka Modal Riwayat Lengkap Seluruh E-Ticket & Jadwal (Meeting & Viewing)
+ * Bali-time schedule guards
+ */
+function updateSlotAvailability(dateId, slotId) {
+  const dateInput = document.getElementById(dateId);
+  const slotSelect = document.getElementById(slotId);
+  if (!dateInput || !slotSelect) return;
+
+  const isToday = dateInput.value === OasisUtils.baliTodayISO();
+  const nowMinutes = OasisUtils.baliNowMinutes();
+  const options = Array.from(slotSelect.options);
+
+  options.forEach((option) => {
+    const start = OasisUtils.slotStartMinutes(option.value);
+    option.disabled = isToday && start !== null && start <= nowMinutes;
+  });
+
+  // Move off a session that has just become unavailable
+  const selected = slotSelect.options[slotSelect.selectedIndex];
+  if (selected && selected.disabled) {
+    const firstOpen = options.find((o) => !o.disabled);
+    if (firstOpen) slotSelect.value = firstOpen.value;
+  }
+}
+
+function validateSchedule(dateValue, slotValue) {
+  const today = OasisUtils.baliTodayISO();
+
+  if (!dateValue) {
+    return 'Please choose a date.';
+  }
+  if (dateValue < today) {
+    return 'That date has already passed in Bali. Please choose another date.';
+  }
+  if (dateValue === today) {
+    const start = OasisUtils.slotStartMinutes(slotValue);
+    if (start !== null && start <= OasisUtils.baliNowMinutes()) {
+      return 'That session has already started in Bali (WITA). Please choose a later session or another date.';
+    }
+  }
+  return '';
+}
+
+function showFormError(id, message) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = message;
+  el.hidden = !message;
+}
+
+/**
+ * E-ticket history (meetings & viewings) for the logged-in member
  */
 function openETicketHistory() {
-  const allBookings = getStoredBookings();
-  if (!allBookings || allBookings.length === 0) {
-    closeAllModals();
-    const modalEmpty = document.getElementById('emptyETicketModal');
-    if (modalEmpty) {
-      openModal(modalEmpty);
-      const btnBook = document.getElementById('btnBookFromEmptyETicket');
-      if (btnBook) {
-        btnBook.onclick = () => {
-          closeAllModals();
-          openBookMeetingModal(OasisDB.getCurrentUser());
-        };
-      }
-      const btnView = document.getElementById('btnViewFromEmptyETicket');
-      if (btnView) {
-        btnView.onclick = () => {
-          closeAllModals();
-          openScheduleViewingModal(null, OasisDB.getCurrentUser());
-        };
-      }
-    }
+  const currentUser = OasisDB.getCurrentUser();
+  if (!currentUser) {
+    window.location.href = 'login.html?reason=auth_required&feature=E-Tickets';
     return;
   }
 
+  const allBookings = OasisDB.getBookingsForUser(currentUser);
   closeAllModals();
+
+  if (allBookings.length === 0) {
+    const modalEmpty = document.getElementById('emptyETicketModal');
+    if (!modalEmpty) return;
+
+    document.getElementById('btnBookFromEmptyETicket').onclick = () => {
+      closeAllModals();
+      openBookMeetingModal(currentUser);
+    };
+    document.getElementById('btnViewFromEmptyETicket').onclick = () => {
+      closeAllModals();
+      openScheduleViewingModal(null, currentUser);
+    };
+    openModal(modalEmpty);
+    return;
+  }
+
   const modalHistory = document.getElementById('eTicketHistoryModal');
   if (!modalHistory) return;
 
-  // Normalisasi data jika ada data lama
-  allBookings.forEach((b) => {
-    if (!b.type) {
-      b.type = b.refNo && b.refNo.includes('VISIT') ? 'viewing' : 'meeting';
-    }
-  });
-
-  // Hitung jumlah riwayat per kategori
-  const countAll = allBookings.length;
-  const countMeeting = allBookings.filter((b) => b.type === 'meeting').length;
-  const countViewing = allBookings.filter((b) => b.type === 'viewing').length;
-
-  const countAllEl = document.getElementById('countAll');
-  if (countAllEl) countAllEl.innerText = countAll;
-
-  const countMeetingEl = document.getElementById('countMeeting');
-  if (countMeetingEl) countMeetingEl.innerText = countMeeting;
-
-  const countViewingEl = document.getElementById('countViewing');
-  if (countViewingEl) countViewingEl.innerText = countViewing;
+  // Count per category
+  setText('countAll', allBookings.length);
+  setText('countMeeting', allBookings.filter((b) => b.type === 'meeting').length);
+  setText('countViewing', allBookings.filter((b) => b.type === 'viewing').length);
 
   let currentFilter = 'all';
 
@@ -629,58 +1111,54 @@ function openETicketHistory() {
     const previewContainer = document.getElementById('historyTicketPreviewWrap');
     if (!listContainer || !previewContainer) return;
 
-    let filtered = allBookings;
-    if (currentFilter === 'meeting') {
-      filtered = allBookings.filter((b) => b.type === 'meeting');
-    } else if (currentFilter === 'viewing') {
-      filtered = allBookings.filter((b) => b.type === 'viewing');
-    }
+    const filtered = currentFilter === 'all' ? allBookings : allBookings.filter((b) => b.type === currentFilter);
 
     if (filtered.length === 0) {
       listContainer.innerHTML = `
         <div class="history-empty-state">
-          <p>Tidak ada riwayat pada kategori ini.</p>
+          <p>No bookings in this category yet.</p>
         </div>
       `;
       previewContainer.innerHTML = '';
       return;
     }
 
-    // Render list kartu riwayat
     listContainer.innerHTML = filtered
       .map((item, idx) => {
         const isViewing = item.type === 'viewing';
+        const status = bookingStatus(item);
         const typeBadge = isViewing
-          ? `<span class="history-type-badge badge-viewing">SURVEI PROPERTI</span>`
-          : `<span class="history-type-badge badge-meeting">KONSULTASI MEETING</span>`;
-        const titleText = isViewing ? (item.property || item.title) : (item.topic || item.title);
+          ? `<span class="history-type-badge badge-viewing">VILLA VIEWING</span>`
+          : `<span class="history-type-badge badge-meeting">MEETING</span>`;
+        const titleText = isViewing ? item.property || item.title : item.topic || item.title;
+        const statusBadge =
+          status === 'confirmed' ? '' : `<span class="history-status status-${status}">${OasisDB.BOOKING_STATUSES[status]}</span>`;
 
         return `
-          <div class="history-item-card ${idx === 0 ? 'active' : ''}" data-ref="${item.refNo}">
+          <div class="history-item-card ${idx === 0 ? 'active' : ''}" data-ref="${esc(item.refNo)}">
             <div class="history-item-top">
               ${typeBadge}
-              <span class="history-item-ref">${item.refNo}</span>
+              <span class="history-item-ref">${esc(item.refNo)}</span>
             </div>
-            <h4 class="history-item-title serif">${titleText}</h4>
+            <h4 class="history-item-title serif">${esc(titleText)}</h4>
             <div class="history-item-meta">
-              <span>📅 ${item.date}</span>
-              <span>⏰ ${item.time}</span>
+              <span>📅 ${esc(bookingDateLabel(item))}</span>
+              <span>⏰ ${esc(item.time)}</span>
+              ${statusBadge}
             </div>
           </div>
         `;
       })
       .join('');
 
-    // Render preview item pertama secara default
+    // Preview the first item by default
     renderTicketPreview(filtered[0]);
 
-    // Bind event klik ke setiap kartu riwayat
     listContainer.querySelectorAll('.history-item-card').forEach((card) => {
       card.addEventListener('click', () => {
         listContainer.querySelectorAll('.history-item-card').forEach((c) => c.classList.remove('active'));
         card.classList.add('active');
-        const ref = card.getAttribute('data-ref');
-        const selectedBooking = allBookings.find((b) => b.refNo === ref);
+        const selectedBooking = allBookings.find((b) => b.refNo === card.getAttribute('data-ref'));
         if (selectedBooking) {
           renderTicketPreview(selectedBooking);
         }
@@ -693,14 +1171,15 @@ function openETicketHistory() {
     if (!previewContainer || !item) return;
 
     const isViewing = item.type === 'viewing';
-    const passHeader = isViewing ? 'OASIS SITE VISIT' : 'OASIS REAL ESTATE';
-    const passSub = isViewing ? 'EXCLUSIVE PROPERTY VIEWING PASS' : 'PRIVATE ADVISORY &bull; VIP PASS';
-    const topicLabel = isViewing ? 'UNIT PROPERTI SURVEI' : 'FOKUS TOPIK ADVISORY';
-    const topicVal = isViewing ? (item.property || item.topic) : (item.topic || item.title);
-    const advisorLabel = isViewing ? 'LAYANAN & PRIVATE HOST' : 'SENIOR ADVISOR & FORMAT';
+    const status = bookingStatus(item);
+    const passHeader = isViewing ? 'OASIS SITE VISIT' : 'OASIS VILLAS';
+    const passSub = isViewing ? 'EXCLUSIVE VILLA VIEWING PASS' : 'PRIVATE CONSULTATION &bull; VIP PASS';
+    const topicLabel = isViewing ? 'VILLA' : 'CONSULTATION FOCUS';
+    const topicVal = isViewing ? item.property || item.topic : item.topic || item.title;
+    const advisorLabel = isViewing ? 'GUESTS & SERVICES' : 'VILLA SPECIALIST & VENUE';
     const advisorVal = isViewing
-      ? `${item.guests || '1-2 Orang'} &bull; Private Chauffeur & Refreshment VIP`
-      : 'Alexander Wright (Senior Partner) &bull; DIFC VIP Lounge / Online VIP Room';
+      ? esc(item.guests || '1–2 Guests (Private Chauffeur & Refreshments)')
+      : 'Alexander Wright (Senior Villa Specialist) &bull; Private VIP Lounge, Seminyak, Bali / Online VIP Room';
 
     previewContainer.innerHTML = `
       <div class="oasis-eticket eticket-in-history" id="activeHistoryETicket">
@@ -713,8 +1192,8 @@ function openETicketHistory() {
             </div>
           </div>
           <div class="eticket-pass-meta">
-            <span class="eticket-pass-tag">CONFIRMED</span>
-            <div class="eticket-ref-code">${item.refNo}</div>
+            <span class="eticket-pass-tag status-${status}">${OasisDB.BOOKING_STATUSES[status].toUpperCase()}</span>
+            <div class="eticket-ref-code">${esc(item.refNo)}</div>
           </div>
         </div>
 
@@ -727,24 +1206,24 @@ function openETicketHistory() {
         <div class="eticket-body">
           <div class="eticket-grid">
             <div class="eticket-col">
-              <span class="eticket-field-label">NAMA KLIEN</span>
-              <strong class="eticket-field-val">${item.name}</strong>
+              <span class="eticket-field-label">CLIENT NAME</span>
+              <strong class="eticket-field-val">${esc(item.name)}</strong>
             </div>
             <div class="eticket-col">
-              <span class="eticket-field-label">EMAIL KONFIRMASI</span>
-              <span class="eticket-field-val">${item.email}</span>
+              <span class="eticket-field-label">CONFIRMATION EMAIL</span>
+              <span class="eticket-field-val">${esc(item.email)}</span>
             </div>
             <div class="eticket-col">
-              <span class="eticket-field-label">TANGGAL</span>
-              <strong class="eticket-field-val highlight">${item.date}</strong>
+              <span class="eticket-field-label">DATE</span>
+              <strong class="eticket-field-val highlight">${esc(bookingDateLabel(item))}</strong>
             </div>
             <div class="eticket-col">
-              <span class="eticket-field-label">SESI WAKTU</span>
-              <strong class="eticket-field-val highlight">${item.time}</strong>
+              <span class="eticket-field-label">SESSION (BALI TIME)</span>
+              <strong class="eticket-field-val highlight">${esc(item.time)}</strong>
             </div>
             <div class="eticket-col eticket-col-full">
               <span class="eticket-field-label">${topicLabel}</span>
-              <strong class="eticket-field-val highlight">${topicVal}</strong>
+              <strong class="eticket-field-val highlight">${esc(topicVal)}</strong>
             </div>
             <div class="eticket-col eticket-col-full">
               <span class="eticket-field-label">${advisorLabel}</span>
@@ -755,13 +1234,13 @@ function openETicketHistory() {
           <div class="eticket-barcode-row">
             <div class="barcode-block">
               <div class="barcode-graphic"></div>
-              <span class="barcode-text">${item.refNo}-VERIFIED-PASS</span>
+              <span class="barcode-text">${esc(item.refNo)}-VERIFIED-PASS</span>
             </div>
             <div class="eticket-seal">
               <div class="seal-inner">
                 <span>OFFICIAL</span>
                 <strong>OASIS</strong>
-                <small>${isViewing ? 'VISIT' : 'ADVISORY'}</small>
+                <small>${isViewing ? 'VISIT' : 'VILLAS'}</small>
               </div>
             </div>
           </div>
@@ -770,31 +1249,30 @@ function openETicketHistory() {
 
       <div class="history-ticket-actions">
         <button type="button" class="btn btn-secondary-dark" id="btnPrintSelectedTicket">
-          Cetak E-Ticket Ini
+          Print This E-Ticket
         </button>
-        ${!isViewing ? `<button type="button" class="btn btn-primary" id="btnViewEmailSelected">Buka Surat Email</button>` : ''}
+        ${!isViewing ? `<button type="button" class="btn btn-primary" id="btnViewEmailSelected">Open Confirmation Email</button>` : ''}
+        <a class="btn btn-whatsapp" href="${esc(whatsappUrl(buildBookingWhatsAppMessage(item)))}" target="_blank" rel="noopener">
+          ${WHATSAPP_ICON} Chat on WhatsApp
+        </a>
       </div>
     `;
 
-    // Pasang listener cetak
-    const btnPrint = document.getElementById('btnPrintSelectedTicket');
-    if (btnPrint) {
-      btnPrint.onclick = () => {
-        printETicket(document.getElementById('activeHistoryETicket'));
-      };
-    }
+    document.getElementById('btnPrintSelectedTicket').onclick = () => {
+      printETicket(document.getElementById('activeHistoryETicket'));
+    };
 
-    // Pasang listener email jika meeting
     const btnEmail = document.getElementById('btnViewEmailSelected');
-    if (btnEmail && !isViewing) {
+    if (btnEmail) {
       btnEmail.onclick = () => {
         showEmailConfirmation(item);
       };
     }
   }
 
-  // Setup tab filter clicks
+  // Tab filters; always reopen on "All"
   document.querySelectorAll('.history-tab-btn').forEach((btn) => {
+    btn.classList.toggle('active', btn.getAttribute('data-filter') === 'all');
     btn.onclick = () => {
       document.querySelectorAll('.history-tab-btn').forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
@@ -808,37 +1286,22 @@ function openETicketHistory() {
 }
 
 /**
- * Tampilkan Pop-up Notifikasi Bahwa Book Meeting Telah Berhasil & Tampilkan E-Ticket
+ * Meeting booked: show the success pop-up with its official e-ticket
  */
 function showBookingSuccessPopup(booking) {
   closeAllModals();
+  lastMeetingBooking = booking;
 
-  // Isi data ke E-Ticket Resmi
-  const etRefNo = document.getElementById('etRefNo');
-  if (etRefNo) etRefNo.innerText = booking.refNo;
+  setText('etRefNo', booking.refNo);
+  setText('etClientName', booking.name);
+  setText('etEmail', booking.email);
+  setText('etDate', bookingDateLabel(booking));
+  setText('etTime', booking.time);
+  setText('etTopic', booking.topic);
+  setText('etBarcodeNum', `${booking.refNo}-VERIFIED-PASS`);
+  setText('bsSentEmail', booking.email);
+  setBookingWhatsAppLink('btnWhatsAppMeeting', booking);
 
-  const etClientName = document.getElementById('etClientName');
-  if (etClientName) etClientName.innerText = booking.name;
-
-  const etEmail = document.getElementById('etEmail');
-  if (etEmail) etEmail.innerText = booking.email;
-
-  const etDate = document.getElementById('etDate');
-  if (etDate) etDate.innerText = booking.date;
-
-  const etTime = document.getElementById('etTime');
-  if (etTime) etTime.innerText = booking.time;
-
-  const etTopic = document.getElementById('etTopic');
-  if (etTopic) etTopic.innerText = booking.topic;
-
-  const etBarcodeNum = document.getElementById('etBarcodeNum');
-  if (etBarcodeNum) etBarcodeNum.innerText = `${booking.refNo}-VERIFIED-PASS`;
-
-  const bsSentEmail = document.getElementById('bsSentEmail');
-  if (bsSentEmail) bsSentEmail.innerText = booking.email;
-
-  // Handler cetak E-ticket
   const btnPrintTicket = document.getElementById('btnPrintTicket');
   if (btnPrintTicket) {
     btnPrintTicket.onclick = () => {
@@ -846,15 +1309,14 @@ function showBookingSuccessPopup(booking) {
     };
   }
 
-  const modalSuccess = document.getElementById('bookingSuccessModal');
-  openModal(modalSuccess);
+  openModal(document.getElementById('bookingSuccessModal'));
 
-  // Perbarui header auth state agar tombol konfirmasi email muncul di navbar
+  // Refresh the navbar so the e-ticket counter updates
   renderHeaderAuthState(OasisDB.getCurrentUser());
 }
 
 /**
- * Utilitas Cetak E-Ticket: 1 Halaman Penuh, Presisi, Jelas, & Bebas Terpotong
+ * Print utilities: one clean A4 page with just the e-ticket
  */
 function preparePrintTicket(sourceElement) {
   if (!sourceElement) return;
@@ -871,14 +1333,16 @@ function preparePrintTicket(sourceElement) {
   clone.removeAttribute('id');
   printTarget.appendChild(clone);
 
-  // Keterangan resmi legal & validasi di bagian bawah tiket
   const printNotice = document.createElement('div');
   printNotice.className = 'print-ticket-footer';
   printNotice.innerHTML = `
     <span>OASIS RESIDENCES &bull; OFFICIAL LUXURY E-PASS &bull; VERIFIED ENTRY</span>
-    <small>Dokumen ini adalah bukti resmi reservasi privat OASIS. Harap ditunjukkan kepada concierge atau site host saat kedatangan.</small>
+    <small>This document is your official OASIS private reservation. All times are Bali time (WITA, UTC+8). Please present it to the concierge or site host on arrival.</small>
   `;
   printTarget.appendChild(printNotice);
+
+  // Print CSS only hides the page while a ticket is being printed
+  document.documentElement.classList.add('printing-ticket');
 }
 
 function printETicket(sourceElement) {
@@ -887,61 +1351,58 @@ function printETicket(sourceElement) {
   window.print();
 }
 
-// Fallback jika user mencetak melalui shortcut browser (Ctrl + P / Cmd + P)
+// Ctrl + P / Cmd + P while a ticket is open prints that ticket; otherwise the page prints normally
 window.addEventListener('beforeprint', () => {
   const printTarget = document.getElementById('oasisPrintTarget');
   if (!printTarget || printTarget.children.length === 0) {
     const activeModalTicket = document.querySelector('.modal-overlay.active .oasis-eticket');
     if (activeModalTicket) {
       preparePrintTicket(activeModalTicket);
-    } else {
-      const anyTicket = document.querySelector('.oasis-eticket');
-      if (anyTicket) {
-        preparePrintTicket(anyTicket);
-      }
     }
   }
 });
 
-// Bersihkan print target setelah dialog cetak selesai/ditutup
 window.addEventListener('afterprint', () => {
   const printTarget = document.getElementById('oasisPrintTarget');
   if (printTarget) {
     printTarget.innerHTML = '';
   }
+  document.documentElement.classList.remove('printing-ticket');
 });
 
 /**
- * Tampilkan Surat Konfirmasi Email Resmi yang Diterima User Sesuai Emailnya
+ * Confirmation email preview, addressed to the email on the booking
  */
 function showEmailConfirmation(booking) {
   closeAllModals();
+  const dateLabel = bookingDateLabel(booking);
 
-  document.getElementById('emRecipient').innerText = `${booking.name} <${booking.email}>`;
-  document.getElementById('emClientName').innerText = booking.name;
-  document.getElementById('emTableRef').innerText = booking.refNo;
-  document.getElementById('emTableDate').innerText = booking.date;
-  document.getElementById('emTableTime').innerText = booking.time;
-  document.getElementById('emTableTopic').innerText = booking.topic;
-  document.getElementById('emTimestamp').innerText = `Baru Saja (${new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} GST)`;
+  setText('emRecipient', `${booking.name} <${booking.email}>`);
+  setText('emClientName', booking.name);
+  setText('emTableRef', booking.refNo);
+  setText('emTableDate', dateLabel);
+  setText('emTableTime', booking.time);
+  setText('emTableTopic', booking.topic);
+  setText('emTimestamp', OasisUtils.formatBaliDateTime(booking.createdAt));
 
-  // Setup tombol Mailto untuk buka langsung di aplikasi email pengguna
-  const mailtoSubject = encodeURIComponent(`Konfirmasi Resmi: Jadwal Konsultasi Properti Privat OASIS [Ref: ${booking.refNo}]`);
+  // Mailto button: opens the same letter in the member's own email app
+  const mailtoSubject = encodeURIComponent(`Official Confirmation: OASIS Private Stay Consultation [Ref: ${booking.refNo}]`);
   const mailtoBody = encodeURIComponent(
-    `Yang Terhormat ${booking.name},\n\n` +
-    `Terima kasih atas reservasi konsultasi properti privat Anda bersama OASIS Luxury Real Estate.\n\n` +
-    `DETAIL JADWAL KONSULTASI RESMI:\n` +
-    `- Nomor Referensi: ${booking.refNo}\n` +
-    `- Tanggal: ${booking.date}\n` +
-    `- Waktu: ${booking.time}\n` +
-    `- Fokus Topik: ${booking.topic}\n` +
-    `- Senior Advisor: Alexander Wright (Senior Partner, Prime Acquisitions)\n` +
-    `- Format: Private VIP Advisory Suite (DIFC, Dubai) / Google Meet VIP Room\n\n` +
-    `Konfirmasi ini diterbitkan secara otomatis untuk alamat email: ${booking.email}\n\n` +
-    `Concierge Hotline: +971 4 555 2201\n` +
-    `Email: advisory@oasisliving.ae\n\n` +
-    `Salam hangat,\n` +
-    `OASIS Private Client Advisory`
+    `Dear ${booking.name},\n\n` +
+      `Thank you for booking a private stay consultation with OASIS Luxury Villas.\n\n` +
+      `OFFICIAL CONSULTATION DETAILS:\n` +
+      `- Reference Number: ${booking.refNo}\n` +
+      `- Date: ${dateLabel}\n` +
+      `- Time: ${booking.time}\n` +
+      `- Consultation Focus: ${booking.topic}\n` +
+      `- Villa Specialist: ${OASIS_CONTACT.advisor}\n` +
+      `- Format: ${OASIS_CONTACT.venue}\n\n` +
+      `All times are Bali time (WITA, UTC+8).\n` +
+      `This confirmation was issued automatically for: ${booking.email}\n\n` +
+      `Concierge (phone & WhatsApp): ${OASIS_CONTACT.phone}\n` +
+      `Email: ${OASIS_CONTACT.email}\n\n` +
+      `Warm regards,\n` +
+      `OASIS Guest Relations`
   );
 
   const btnOpenMailto = document.getElementById('btnOpenMailto');
@@ -949,143 +1410,209 @@ function showEmailConfirmation(booking) {
     btnOpenMailto.href = `mailto:${encodeURIComponent(booking.email)}?subject=${mailtoSubject}&body=${mailtoBody}`;
   }
 
-  const modalEmail = document.getElementById('emailConfirmationModal');
-  openModal(modalEmail);
+  openModal(document.getElementById('emailConfirmationModal'));
 }
 
 /**
- * Utilitas Penyimpanan Riwayat Booking di LocalStorage
+ * Helpers
  */
-function saveBooking(booking) {
-  try {
-    const list = getStoredBookings();
-    list.unshift(booking);
-    localStorage.setItem('oasis_booking_history', JSON.stringify(list));
-  } catch (e) {
-    console.error('Gagal menyimpan booking', e);
-  }
+function bookingDateLabel(booking) {
+  return booking.rawDate ? OasisUtils.formatDateLong(booking.rawDate) : booking.date || '-';
 }
 
-function getStoredBookings() {
-  try {
-    const data = localStorage.getItem('oasis_booking_history');
-    return data ? JSON.parse(data) : [];
-  } catch (e) {
-    return [];
-  }
+function bookingStatus(booking) {
+  return OasisDB.BOOKING_STATUSES[booking.status] ? booking.status : 'confirmed';
 }
+
+function plural(count, word) {
+  const n = Number(count) || 0;
+  return `${n} ${word}${n === 1 ? '' : 's'}`;
+}
+
+// Card price: "Rp 4,700,000 / night" with the unit set smaller
+function nightlyRateHtml(rate) {
+  return Number(rate) > 0 ? `${esc(OasisUtils.formatIdr(rate))}<small> / night</small>` : 'Rate on request';
+}
+
+// "910 m² (9,800 sq ft)" -> "910 m²"
+function shortArea(area) {
+  return String(area || '-').split('(')[0].trim();
+}
+
+function setText(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value == null ? '' : value;
+}
+
+// Element that opened the first modal in a chain; focus returns here on close
+let modalReturnFocus = null;
+const FOCUSABLE =
+  'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 function closeAllModals() {
+  const wasOpen = !!document.querySelector('.modal-overlay.active');
   document.querySelectorAll('.modal-overlay').forEach((m) => {
     m.classList.remove('active');
   });
-  document.body.style.overflow = 'auto';
+  document.body.style.overflow = '';
+  if (wasOpen && modalReturnFocus && modalReturnFocus.isConnected) {
+    modalReturnFocus.focus({ preventScroll: true });
+  }
 }
 
 function openModal(modalElement) {
   if (!modalElement) return;
+  const active = document.activeElement;
+  if (active && !active.closest('.modal-overlay')) modalReturnFocus = active;
+
   modalElement.classList.add('active');
   document.body.style.overflow = 'hidden';
+
+  // Move focus into the dialog (the dialog itself, so phones don't pop up the keyboard)
+  const dialog = modalElement.querySelector('.modal-dialog');
+  if (dialog) dialog.focus({ preventScroll: true });
+}
+
+// Keep Tab / Shift+Tab inside the open dialog
+function trapFocus(e) {
+  const dialog = document.querySelector('.modal-overlay.active .modal-dialog');
+  if (!dialog) return;
+
+  const focusables = Array.from(dialog.querySelectorAll(FOCUSABLE)).filter((el) => el.getClientRects().length > 0);
+  if (focusables.length === 0) {
+    e.preventDefault();
+    dialog.focus();
+    return;
+  }
+
+  const first = focusables[0];
+  const last = focusables[focusables.length - 1];
+  const current = document.activeElement;
+  const inside = dialog.contains(current) && current !== dialog;
+
+  if (e.shiftKey && (!inside || current === first)) {
+    e.preventDefault();
+    last.focus();
+  } else if (!e.shiftKey && (!inside || current === last)) {
+    e.preventDefault();
+    first.focus();
+  }
 }
 
 /**
- * Buka Modal Book a Meeting Form
+ * Book a Meeting form
  */
 function openBookMeetingModal(currentUser) {
   const modal = document.getElementById('bookMeetingModal');
   if (!modal) return;
 
   if (currentUser) {
-    const nameInput = document.getElementById('bmName');
-    const emailInput = document.getElementById('bmEmail');
-    if (nameInput) nameInput.value = currentUser.name;
-    if (emailInput) emailInput.value = currentUser.email;
+    document.getElementById('bmName').value = currentUser.name;
+    document.getElementById('bmEmail').value = currentUser.email;
   }
 
   const dateInput = document.getElementById('bmDate');
-  if (dateInput) {
-    dateInput.min = new Date().toISOString().split('T')[0];
-  }
+  dateInput.min = OasisUtils.baliTodayISO();
+  if (dateInput.value && dateInput.value < dateInput.min) dateInput.value = '';
+  updateSlotAvailability('bmDate', 'bmTime');
+  showFormError('bmError', '');
 
   openModal(modal);
 }
 
 /**
- * Buka Modal Schedule a Viewing Form
+ * Schedule a Viewing form
  */
 function openScheduleViewingModal(preselectedEstateId, currentUser) {
   const modal = document.getElementById('scheduleViewingModal');
   if (!modal) return;
 
+  const properties = OasisDB.getProperties();
   const select = document.getElementById('svEstate');
-  if (select) {
-    select.innerHTML = OASIS_ESTATES.map(
-      (e) => `<option value="${e.id}" ${e.id === preselectedEstateId ? 'selected' : ''}>${e.title} (${e.location} - ${e.price})</option>`
-    ).join('');
-  }
+  select.innerHTML = properties.length
+    ? properties
+        .map(
+          (e) =>
+            `<option value="${esc(e.id)}" ${e.id === preselectedEstateId ? 'selected' : ''}>${esc(e.title)} (${esc(e.location)} – ${esc(OasisUtils.formatNightlyRate(e.nightlyRate))})</option>`
+        )
+        .join('')
+    : '<option value="">No properties available right now</option>';
 
   if (currentUser) {
-    const nameInput = document.getElementById('svName');
-    const emailInput = document.getElementById('svEmail');
-    if (nameInput) nameInput.value = currentUser.name;
-    if (emailInput) emailInput.value = currentUser.email;
+    document.getElementById('svName').value = currentUser.name;
+    document.getElementById('svEmail').value = currentUser.email;
   }
 
   const dateInput = document.getElementById('svDate');
-  if (dateInput) {
-    dateInput.min = new Date().toISOString().split('T')[0];
-  }
+  dateInput.min = OasisUtils.baliTodayISO();
+  if (dateInput.value && dateInput.value < dateInput.min) dateInput.value = '';
+  updateSlotAvailability('svDate', 'svTimeSlot');
+  showFormError('svError', '');
 
   openModal(modal);
 }
 
 /**
- * Buka Modal Detail Spesifikasi Properti (Kamar, Kamar Mandi, Fasilitas)
+ * Property detail modal (bedrooms, bathrooms, area, garage, facilities)
  */
 function openPropertyDetailModal(estate) {
   const modal = document.getElementById('propertyDetailModal');
   if (!modal) return;
 
-  document.getElementById('pdImage').style.backgroundImage = `url('${estate.image}')`;
-  document.getElementById('pdTitle').innerText = estate.title;
-  document.getElementById('pdLocation').innerText = estate.location;
-  document.getElementById('pdPrice').innerText = estate.price;
-  document.getElementById('pdTag').innerText = estate.tag;
-  document.getElementById('pdDescription').innerText = estate.description;
+  document.getElementById('pdImage').style.backgroundImage = estate.image ? `url("${OasisUtils.cssUrl(estate.image)}")` : '';
+  setText('pdTitle', estate.title);
+  setText('pdLocation', estate.location);
+  const hasRate = Number(estate.nightlyRate) > 0;
+  setText('pdPrice', hasRate ? OasisUtils.formatIdr(estate.nightlyRate) : 'Rate on request');
+  setText('pdRate', hasRate ? 'per night' : '');
+  setText('pdDescription', estate.description);
+  setText('pdBedrooms', plural(estate.bedrooms, 'Bedroom'));
+  setText('pdBathrooms', plural(estate.bathrooms, 'Bathroom'));
+  setText('pdArea', estate.area || '-');
+  setText('pdGarage', estate.garage || '-');
 
-  // Spesifikasi kamar & kamar mandi & luas & garasi
-  document.getElementById('pdBedrooms').innerText = `${estate.bedrooms} Kamar Tidur`;
-  document.getElementById('pdBathrooms').innerText = `${estate.bathrooms} Kamar Mandi`;
-  document.getElementById('pdArea').innerText = estate.area;
-  document.getElementById('pdGarage').innerText = estate.garage;
+  const pdTag = document.getElementById('pdTag');
+  pdTag.textContent = estate.tag || '';
+  pdTag.style.display = estate.tag ? 'inline-block' : 'none';
 
-  const pdBestSellerBadge = document.getElementById('pdBestSellerBadge');
-  if (pdBestSellerBadge) {
-    pdBestSellerBadge.style.display = estate.isBestSeller ? 'inline-block' : 'none';
-  }
+  document.getElementById('pdBestSellerBadge').style.display = estate.isBestSeller ? 'inline-block' : 'none';
 
-  // Render fasilitas
-  const facilitiesList = document.getElementById('pdFacilitiesList');
-  if (facilitiesList) {
-    facilitiesList.innerHTML = estate.facilities
-      .map(
-        (f) => `
+  const facilities = Array.isArray(estate.facilities) ? estate.facilities : [];
+  document.getElementById('pdFacilitiesList').innerHTML = facilities.length
+    ? facilities
+        .map(
+          (f) => `
         <li class="facility-item">
           <span class="facility-icon">✓</span>
-          <span class="facility-text">${f}</span>
+          <span class="facility-text">${esc(f)}</span>
         </li>
       `
-      )
-      .join('');
-  }
+        )
+        .join('')
+    : `<li class="facility-item"><span class="facility-text">Full facility details are available on request.</span></li>`;
 
-  const btnScheduleFromDetail = document.getElementById('btnScheduleFromDetail');
-  if (btnScheduleFromDetail) {
-    btnScheduleFromDetail.onclick = () => {
-      closeAllModals();
-      openScheduleViewingModal(estate.id, OasisDB.getCurrentUser());
-    };
-  }
+  document.getElementById('btnScheduleFromDetail').onclick = () => {
+    closeAllModals();
+    openScheduleViewingModal(estate.id, OasisDB.getCurrentUser());
+  };
+  document.getElementById('btnReserveFromDetail').onclick = () => {
+    closeAllModals();
+    openReserveModal(estate.id);
+  };
 
   openModal(modal);
+}
+
+/**
+ * Live Bali clock in the footer
+ */
+function startBaliClock() {
+  const clock = document.getElementById('baliClock');
+  if (!clock) return;
+
+  const tick = () => {
+    clock.textContent = OasisUtils.baliClock();
+  };
+  tick();
+  setInterval(tick, 1000);
 }

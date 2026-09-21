@@ -1,24 +1,26 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login | OASIS Luxury Architectural Real Estate</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#3b2721">
+  <title>Member Login | OASIS Luxury Villas Bali</title>
+  <link rel="icon" type="image/svg+xml" href="oasis-mark.svg">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="bg-[#181615] text-slate-800 min-h-screen flex items-center justify-center p-4 relative overflow-hidden login-page">
-  <a href="landing.html" class="login-back">← Kembali ke Beranda</a>
+<body class="bg-[#181615] text-slate-800 min-h-screen flex items-center justify-center p-4 relative overflow-x-hidden overflow-y-auto login-page auth-page">
+  <a href="index.html" class="login-back">← Back to Home</a>
 
-  <div class="absolute inset-0 z-0">
-    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=80" class="w-full h-full object-cover filter brightness-[0.35] scale-105" alt="Oasis Residence">
+  <div class="fixed inset-0 z-0">
+    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=80" class="w-full h-full object-cover filter brightness-[0.35] scale-105" alt="OASIS residence">
     <div class="absolute inset-0 bg-gradient-to-t from-[#12100f] via-transparent to-black/50"></div>
   </div>
 
-  <div class="relative z-10 w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl overflow-hidden shadow-2xl">
+  <div class="relative z-10 w-full max-w-4xl my-8 grid grid-cols-1 md:grid-cols-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl overflow-hidden shadow-2xl">
     <div class="relative hidden md:flex flex-col justify-between p-10 bg-gradient-to-br from-black/50 via-black/20 to-transparent border-r border-white/10">
       <div>
         <span class="text-2xl font-bold tracking-widest text-white font-serif-luxury">OASIS</span>
@@ -26,16 +28,16 @@
 
       <div class="my-auto space-y-4">
         <span class="inline-block px-3 py-1 bg-white/15 backdrop-blur-md rounded-full text-[11px] uppercase tracking-wider text-white/90 border border-white/20">Private Collection</span>
-        <h2 class="text-3xl font-serif-luxury text-white leading-tight">The UAE's Most Exclusive Doors, Unlocked.</h2>
-        <p class="text-white/70 text-sm leading-relaxed">Masuk ke akun pribadi Anda untuk melihat seluruh koleksi kediaman mewah, spesifikasi detail unit, dan membuat janji temu eksklusif.</p>
-        
+        <h2 class="text-3xl font-serif-luxury text-white leading-tight">Bali's Most Exclusive Doors, Unlocked.</h2>
+        <p class="text-white/70 text-sm leading-relaxed">Sign in to your private account to explore every villa, see nightly rates and facilities, and book exclusive appointments.</p>
+
         <div class="pt-2 text-xs text-white/60">
-          Belum memiliki akun? <a href="register.html" class="text-white underline font-semibold hover:text-white/90">Daftar sekarang</a>
+          Don't have an account? <a href="register.html" class="text-white underline font-semibold hover:text-white/90">Register now</a>
         </div>
       </div>
 
       <div class="text-xs text-white/40">
-        &copy; 2026 OASIS Residences. Hak Cipta Terpelihara.
+        &copy; 2026 OASIS Residences. All rights reserved.
       </div>
     </div>
 
@@ -44,37 +46,36 @@
         <div class="md:hidden mb-4">
           <span class="text-2xl font-bold tracking-widest text-[#5C3930] font-serif-luxury">OASIS</span>
         </div>
-        <h1 class="text-2xl font-bold text-slate-900 font-serif-luxury mb-1">Login Masuk</h1>
-        <p class="text-slate-600 text-sm">Silakan masukkan akun Anda untuk melanjutkan</p>
+        <h1 class="text-2xl font-bold text-slate-900 font-serif-luxury mb-1">Member Login</h1>
+        <p class="text-slate-600 text-sm">Please sign in to your account to continue</p>
       </div>
 
       <!-- Alert Container -->
-      <div id="loginAlert" class="hidden mb-5 p-3.5 rounded-xl text-xs font-medium leading-relaxed"></div>
+      <div id="loginAlert" class="hidden mb-5 p-3.5 rounded-xl text-xs font-medium leading-relaxed" role="alert"></div>
 
       <form id="loginForm" class="space-y-4">
         <div>
-          <label for="login-email" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Alamat E-mail</label>
-          <input id="login-email" type="email" placeholder="nama@domain.com" required class="w-full px-4 py-3 rounded-xl bg-slate-100/90 border border-slate-300 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#5C3930] focus:ring-1 focus:ring-[#5C3930] transition text-sm">
+          <label for="login-email" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Email Address</label>
+          <input id="login-email" type="email" maxlength="254" placeholder="name@domain.com" required autocomplete="email" class="w-full px-4 py-3 rounded-xl bg-slate-100/90 border border-slate-300 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#5C3930] focus:ring-1 focus:ring-[#5C3930] transition text-sm">
         </div>
 
         <div>
           <div class="flex justify-between items-center mb-1.5">
-            <label for="login-password" class="text-xs font-semibold text-slate-700 uppercase tracking-wider">Kata Sandi</label>
-            <a href="#" id="forgotPasswordBtn" class="text-xs text-[#5C3930] font-semibold hover:underline">Lupa password?</a>
+            <label for="login-password" class="text-xs font-semibold text-slate-700 uppercase tracking-wider">Password</label>
+            <a href="#" id="forgotPasswordBtn" class="text-xs text-[#5C3930] font-semibold hover:underline">Forgot password?</a>
           </div>
-          <input id="login-password" type="password" placeholder="••••••••" required class="w-full px-4 py-3 rounded-xl bg-slate-100/90 border border-slate-300 text-slate-800 focus:outline-none focus:border-[#5C3930] focus:ring-1 focus:ring-[#5C3930] transition text-sm">
+          <input id="login-password" type="password" placeholder="••••••••" required autocomplete="current-password" class="w-full px-4 py-3 rounded-xl bg-slate-100/90 border border-slate-300 text-slate-800 focus:outline-none focus:border-[#5C3930] focus:ring-1 focus:ring-[#5C3930] transition text-sm">
         </div>
 
         <button type="submit" id="btnSubmitLogin" class="w-full py-3.5 bg-[#5C3930] hover:bg-[#462b24] text-white font-medium rounded-xl shadow-lg shadow-[#5C3930]/25 transition duration-200 text-sm tracking-wide">
-          Login Masuk
+          Log In
         </button>
       </form>
 
-      <!-- Navigasi ke Registrasi (Tombol Google Dihapus) -->
       <div class="mt-8 pt-6 border-t border-slate-200 text-center">
         <p class="text-sm text-slate-600">
-          Belum memiliki akun?
-          <a href="register.html" class="text-[#5C3930] font-bold hover:underline ml-1">Daftar Sekarang</a>
+          Don't have an account?
+          <a href="register.html" class="text-[#5C3930] font-bold hover:underline ml-1">Register Now</a>
         </p>
       </div>
     </div>
@@ -89,72 +90,66 @@
       const alertBox = document.getElementById('loginAlert');
       const btnSubmit = document.getElementById('btnSubmitLogin');
 
-      // Tampilkan alert
-      function showAlert(msg, type = 'error') {
-        alertBox.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'border-red-200', 'bg-emerald-50', 'text-emerald-700', 'border-emerald-200', 'bg-amber-50', 'text-amber-700', 'border-amber-200');
-        alertBox.classList.add('border');
+      const ALERT_STYLES = {
+        error: { icon: '⚠️', classes: ['bg-red-50', 'text-red-700', 'border-red-200'] },
+        warning: { icon: '🔒', classes: ['bg-amber-50', 'text-amber-700', 'border-amber-200'] },
+        success: { icon: '✓', classes: ['bg-emerald-50', 'text-emerald-700', 'border-emerald-200'] }
+      };
 
-        if (type === 'error') {
-          alertBox.classList.add('bg-red-50', 'text-red-700', 'border-red-200');
-          alertBox.innerHTML = `⚠️ <span>${msg}</span>`;
-        } else if (type === 'warning') {
-          alertBox.classList.add('bg-amber-50', 'text-amber-700', 'border-amber-200');
-          alertBox.innerHTML = `🔒 <span>${msg}</span>`;
-        } else {
-          alertBox.classList.add('bg-emerald-50', 'text-emerald-700', 'border-emerald-200');
-          alertBox.innerHTML = `✓ <span>${msg}</span>`;
-        }
+      // Show alert (textContent, so URL parameters can never inject HTML)
+      function showAlert(msg, type = 'error') {
+        const style = ALERT_STYLES[type] || ALERT_STYLES.error;
+        alertBox.className = 'mb-5 p-3.5 rounded-xl text-xs font-medium leading-relaxed border';
+        alertBox.classList.add(...style.classes);
+        alertBox.textContent = `${style.icon} ${msg}`;
       }
 
-      // Periksa query parameters
+      // Query parameters from register.html or from a protected feature
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('registered') === 'true') {
-        showAlert('Registrasi berhasil! Silakan masukkan kata sandi untuk login.', 'success');
-        if (urlParams.get('email')) {
-          emailInput.value = decodeURIComponent(urlParams.get('email'));
+        showAlert('Registration successful! Please enter your password to log in.', 'success');
+        const registeredEmail = urlParams.get('email');
+        if (registeredEmail) {
+          emailInput.value = registeredEmail;
           passwordInput.focus();
         }
       } else if (urlParams.get('reason') === 'auth_required') {
-        const feature = urlParams.get('feature') || 'Fitur ini';
-        showAlert(`${feature} mewajibkan Anda untuk login terlebih dahulu.`, 'warning');
+        const feature = urlParams.get('feature') || 'This feature';
+        showAlert(`${feature} requires you to log in first.`, 'warning');
       }
 
-      // Handle submit login
       loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const email = emailInput.value.trim();
         const password = passwordInput.value;
 
         if (!email || !password) {
-          showAlert('Silakan masukkan email dan kata sandi.');
+          showAlert('Please enter your email and password.');
           return;
         }
 
         btnSubmit.disabled = true;
-        btnSubmit.innerText = 'Memverifikasi...';
+        btnSubmit.innerText = 'Verifying...';
 
         const result = OasisDB.loginUser(email, password);
 
         if (!result.success) {
           showAlert(result.message, 'error');
           btnSubmit.disabled = false;
-          btnSubmit.innerText = 'Login Masuk';
+          btnSubmit.innerText = 'Log In';
         } else {
-          showAlert('Login berhasil! Mengalihkan ke beranda...', 'success');
+          showAlert('Login successful! Redirecting to the home page...', 'success');
           setTimeout(() => {
-            window.location.href = 'landing.html';
+            window.location.href = 'index.html';
           }, 800);
         }
       });
 
-      // Lupa password simple helper
-      const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
-      if (forgotPasswordBtn) {
-        forgotPasswordBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          alert('Untuk demo ini, silakan buat akun baru di halaman registrasi atau gunakan akun demo budi@oasis.ae / password123');
-        });
-      }
+      // Simple forgot-password helper for the demo
+      document.getElementById('forgotPasswordBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        alert('For this demo, please create a new account on the registration page, or use the demo account budi@oasis.id / password123.');
+      });
     });
   </script>
 </body>

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Not linked from the public site; keep it out of search engines too -->
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>OASIS Console</title>
+  <link rel="icon" type="image/svg+xml" href="oasis-mark.svg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Hides both views until the Tailwind CDN has generated its own .hidden */
+    .hidden { display: none; }
+    .admin-card {
+      background: #ffffff;
+      border: 1px solid rgba(58, 39, 33, 0.08);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(54, 37, 31, 0.05);
+    }
+    .admin-input {
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(58, 39, 33, 0.18);
+      background: #faf7f5;
+      font-size: 0.875rem;
+      color: #1d1a17;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+    .admin-input:focus {
+      border-color: #5c3930;
+      background: #ffffff;
+      box-shadow: 0 0 0 1px #5c3930;
+    }
+    .admin-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .admin-field > span {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #334155;
+    }
+    .admin-btn-primary,
+    .admin-btn-secondary,
+    .admin-btn-danger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+    .admin-btn-primary { background: #5c3930; color: #fff; box-shadow: 0 8px 20px rgba(92, 57, 48, 0.2); }
+    .admin-btn-primary:hover { background: #462b24; transform: translateY(-1px); }
+    .admin-btn-secondary { background: #ede6df; color: #3b2721; border: 1px solid rgba(90, 62, 54, 0.15); }
+    .admin-btn-secondary:hover { background: #e2d7cd; }
+    .admin-btn-danger { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+    .admin-btn-danger:hover { background: #b91c1c; color: #fff; }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .admin-table th {
+      text-align: left;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748b;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(58, 39, 33, 0.1);
+      white-space: nowrap;
+    }
+    .admin-table td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(58, 39, 33, 0.06);
+      vertical-align: top;
+    }
+    .admin-table tbody tr:hover td { background: #faf7f4; }
+    .admin-tab {
+      padding: 12px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.6);
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .admin-tab:hover { color: #fff; }
+    .admin-tab.is-active { color: #f7d57f; border-bottom-color: #f7d57f; }
+    .tab-count {
+      display: inline-block;
+      min-width: 20px;
+      margin-left: 4px;
+      padding: 0 6px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      font-size: 0.7rem;
+      text-align: center;
+    }
+    .type-badge,
+    .status-pill {
+      display: inline-block;
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+    .type-meeting { background: rgba(90, 62, 54, 0.1); color: #5a3e36; }
+    .type-viewing { background: rgba(197, 160, 89, 0.15); color: #8c6a28; }
+    .status-select {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: 1px solid transparent;
+      cursor: pointer;
+      outline: none;
+    }
+    .status-confirmed { background: #eef2ff; color: #3730a3; border-color: #c7d2fe; }
+    .status-completed { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
+    .status-cancelled { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+    .status-published { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
+    .status-hidden { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
+    .review-stars { color: #e6a117; letter-spacing: 0.1em; white-space: nowrap; }
+    .review-stars .off { color: #e5ddd3; }
+    .member-dialog {
+      width: min(460px, calc(100% - 32px));
+      max-height: calc(100dvh - 32px);
+      margin: auto;
+      padding: 24px;
+      border: 1px solid rgba(58, 39, 33, 0.15);
+      border-radius: 8px;
+      background: #fff;
+      color: #1d1a17;
+      overflow-y: auto;
+    }
+    .member-dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
+    .member-dialog .admin-input { width: 100%; min-width: 0; }
+    .member-dialog .admin-field { margin-top: 16px; }
+    .member-dialog-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+    .member-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+  </style>
+</head>
+<body class="login-page bg-[#f4efe9] text-slate-800 min-h-screen">
+
+  <!-- ================= ADMIN LOGIN ================= -->
+  <section id="adminLoginView" class="hidden min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#181615]">
+    <div class="absolute inset-0 z-0">
+      <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=80" class="w-full h-full object-cover filter brightness-[0.25] scale-105" alt="">
+      <div class="absolute inset-0 bg-gradient-to-t from-[#12100f] via-transparent to-black/60"></div>
+    </div>
+
+    <div class="relative z-10 w-full max-w-md bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl p-8 md:p-10">
+      <div class="flex items-center gap-3 mb-8">
+        <img src="oasis-mark.svg" alt="" width="44" height="44" class="shrink-0" aria-hidden="true">
+        <div class="leading-tight">
+          <div class="font-serif-luxury text-xl font-bold tracking-widest text-[#3b2721]">OASIS</div>
+          <div class="text-[11px] uppercase tracking-[0.2em] text-slate-500">Admin Console</div>
+        </div>
+      </div>
+
+      <h1 class="text-2xl font-bold text-slate-900 font-serif-luxury mb-1">Administrator Sign In</h1>
+      <p class="text-slate-600 text-sm mb-6">Restricted area. Authorised OASIS staff only.</p>
+
+      <div id="adminLoginAlert" class="hidden mb-5 p-3.5 rounded-xl text-xs font-medium border bg-red-50 text-red-700 border-red-200" role="alert"></div>
+
+      <form id="adminLoginForm" class="space-y-4">
+        <div>
+          <label for="adminUsername" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Username</label>
+          <input id="adminUsername" type="text" required autocomplete="username" autocapitalize="off" spellcheck="false" class="w-full px-4 py-3 rounded-xl bg-slate-100/90 border border-slate-300 text-slate-800 focus:outline-none focus:border-[#5C3930] focus:ring-1 focus:ring-[#5C3930] transition text-sm">
+        </div>
+        <div>
+          <label for="adminPassword" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Password</label>
+          <input id="adminPassword" type="password" required autocomplete="current-password" class="w-full px-4 py-3 rounded-xl bg-slate-100/90 border border-slate-300 text-slate-800 focus:outline-none focus:border-[#5C3930] focus:ring-1 focus:ring-[#5C3930] transition text-sm">
+        </div>
+        <button type="submit" class="w-full py-3.5 bg-[#3b2721] hover:bg-[#2b1c17] text-white font-medium rounded-xl shadow-lg shadow-black/20 transition duration-200 text-sm tracking-wide">
+          Sign In to Console
+        </button>
+      </form>
+
+      <p class="mt-6 text-[11px] text-slate-400 text-center">The admin session ends when this browser tab is closed.</p>
+    </div>
+  </section>
+
+  <!-- ================= ADMIN DASHBOARD ================= -->
+  <div id="adminDashboardView" class="hidden min-h-screen">
+    <header class="bg-[#231c19] text-white sticky top-0 z-30 shadow-lg">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <img src="oasis-mark.svg" alt="" width="36" height="36" class="shrink-0" aria-hidden="true">
+          <div class="leading-tight">
+            <div class="font-serif-luxury font-bold tracking-widest">OASIS</div>
+            <div class="text-[10px] uppercase tracking-[0.2em] text-white/60">Admin Console</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 sm:gap-3 text-xs">
+          <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 border border-white/15" title="Bali time (WITA, UTC+8)">🕒 <span id="adminClock">--:-- WITA</span></span>
+          <span class="hidden md:inline text-white/70">Signed in as <strong id="adminName" class="text-white">admin</strong></span>
+          <a href="index.html" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 transition">View site ↗</a>
+          <button id="btnAdminLogout" class="px-3 py-1.5 rounded-full bg-white/10 hover:bg-red-600 border border-white/15 font-semibold transition">Log out</button>
+        </div>
+      </div>
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 flex gap-1 overflow-x-auto" id="adminTabs">
+        <button type="button" class="admin-tab" data-tab="overview">Overview</button>
+        <button type="button" class="admin-tab" data-tab="bookings">Bookings <span class="tab-count" id="tabCountBookings">0</span></button>
+        <button type="button" class="admin-tab" data-tab="members">Members <span class="tab-count" id="tabCountMembers">0</span></button>
+        <button type="button" class="admin-tab" data-tab="properties">Properties <span class="tab-count" id="tabCountProperties">0</span></button>
+        <button type="button" class="admin-tab" data-tab="reviews">Reviews <span class="tab-count" id="tabCountReviews">0</span></button>
+      </nav>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+      <!-- Overview -->
+      <section data-panel="overview">
+        <div class="mb-6">
+          <h1 class="font-serif-luxury text-3xl text-[#3b2721]">Welcome back</h1>
+          <p class="text-sm text-slate-500" id="overviewDate"></p>
+        </div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8" id="statCards"></div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="admin-card lg:col-span-2">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="font-serif-luxury text-lg text-[#3b2721]">Latest bookings</h2>
+              <button type="button" class="text-xs font-bold text-[#5C3930] hover:underline" data-goto="bookings">View all →</button>
+            </div>
+            <div id="overviewBookings"></div>
+          </div>
+          <div class="admin-card">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="font-serif-luxury text-lg text-[#3b2721]">Newest members</h2>
+              <button type="button" class="text-xs font-bold text-[#5C3930] hover:underline" data-goto="members">View all →</button>
+            </div>
+            <div id="overviewMembers"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bookings -->
+      <section data-panel="bookings" class="hidden">
+        <div class="mb-5">
+          <h1 class="font-serif-luxury text-3xl text-[#3b2721]">Bookings</h1>
+          <p class="text-sm text-slate-500">Consultations and villa viewings from every member. Times are Bali time (WITA).</p>
+        </div>
+        <div class="admin-card">
+          <div class="flex flex-wrap gap-3 mb-4">
+            <input id="bookingSearch" type="search" placeholder="Search reference, client or property…" class="admin-input flex-1 min-w-[220px]">
+            <select id="bookingTypeFilter" class="admin-input">
+              <option value="all">All types</option>
+              <option value="meeting">Meetings</option>
+              <option value="viewing">Viewings</option>
+            </select>
+            <select id="bookingStatusFilter" class="admin-input">
+              <option value="all">All statuses</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Reference</th>
+                  <th>Client</th>
+                  <th>Schedule (WITA)</th>
+                  <th>Subject</th>
+                  <th>Status</th>
+                  <th>Booked</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="bookingsTableBody"></tbody>
+            </table>
+          </div>
+          <p id="bookingsSummary" class="text-xs text-slate-500 mt-3"></p>
+        </div>
+      </section>
+
+      <!-- Members -->
+      <section data-panel="members" class="hidden">
+        <div class="mb-5">
+          <h1 class="font-serif-luxury text-3xl text-[#3b2721]">Members</h1>
+          <p class="text-sm text-slate-500">Everyone who has registered on the public site.</p>
+        </div>
+        <div class="admin-card">
+          <div class="flex flex-wrap gap-3 mb-4">
+            <input id="memberSearch" type="search" placeholder="Search name or email…" class="admin-input flex-1 min-w-[220px]">
+          </div>
+          <div class="overflow-x-auto">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Member</th>
+                  <th>Email</th>
+                  <th>Registered</th>
+                  <th>Bookings</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="membersTableBody"></tbody>
+            </table>
+          </div>
+          <p id="membersSummary" class="text-xs text-slate-500 mt-3"></p>
+        </div>
+      </section>
+
+      <!-- Properties -->
+      <section data-panel="properties" class="hidden">
+        <div class="flex flex-wrap items-end justify-between gap-4 mb-5">
+          <div>
+            <h1 class="font-serif-luxury text-3xl text-[#3b2721]">Properties</h1>
+            <p class="text-sm text-slate-500">Changes appear on the public site right away. Every villa is shown to all visitors; Best Sellers are listed first.</p>
+          </div>
+          <div class="flex gap-2">
+            <button type="button" id="btnRestoreProperties" class="admin-btn-secondary">Restore defaults</button>
+            <button type="button" id="btnAddProperty" class="admin-btn-primary">+ Add property</button>
+          </div>
+        </div>
+        <div id="propertiesGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+      </section>
+
+      <!-- Reviews -->
+      <section data-panel="reviews" class="hidden">
+        <div class="mb-5">
+          <h1 class="font-serif-luxury text-3xl text-[#3b2721]">Reviews</h1>
+          <p class="text-sm text-slate-500">Guest testimonials on the public site. Members' reviews go live immediately; hide or delete anything inappropriate.</p>
+        </div>
+        <div class="admin-card">
+          <div class="flex flex-wrap gap-3 mb-4">
+            <input id="reviewSearch" type="search" placeholder="Search guest, villa or review text…" class="admin-input flex-1 min-w-[220px]">
+            <select id="reviewStatusFilter" class="admin-input">
+              <option value="all">All reviews</option>
+              <option value="published">Published</option>
+              <option value="hidden">Hidden</option>
+            </select>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Guest</th>
+                  <th>Villa</th>
+                  <th>Rating</th>
+                  <th>Review</th>
+                  <th>Submitted</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="reviewsTableBody"></tbody>
+            </table>
+          </div>
+          <p id="reviewsSummary" class="text-xs text-slate-500 mt-3"></p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ================= MEMBER EDITOR ================= -->
+  <dialog id="memberModal" class="member-dialog" aria-labelledby="memberModalTitle" aria-describedby="memberModalAccount">
+    <div class="flex items-center justify-between gap-3">
+      <h2 id="memberModalTitle" class="font-serif-luxury text-xl text-[#3b2721]">Edit member</h2>
+      <button type="button" data-close-member class="w-9 h-9 shrink-0 rounded-full bg-slate-100 hover:bg-slate-200 text-xl" aria-label="Close" title="Close">&times;</button>
+    </div>
+    <p id="memberModalAccount" class="text-sm text-slate-500 mt-2" style="overflow-wrap:anywhere"></p>
+    <form id="memberForm">
+      <div id="memberProfileFields">
+        <label class="admin-field"><span>Name</span><input id="mfName" class="admin-input" required maxlength="100" autocomplete="off"></label>
+        <label class="admin-field"><span>Email</span><input id="mfEmail" type="email" class="admin-input" required maxlength="254" autocomplete="off"></label>
+      </div>
+      <div id="memberPasswordFields" hidden>
+        <p class="text-sm text-slate-600 mt-4">This changes the OASIS account password and ends the member's current session.</p>
+        <label class="admin-field"><span>New OASIS password</span><input id="mfPassword" type="password" class="admin-input" required minlength="6" maxlength="128" autocomplete="new-password" disabled></label>
+        <label class="admin-field"><span>Confirm new password</span><input id="mfPasswordConfirm" type="password" class="admin-input" required minlength="6" maxlength="128" autocomplete="new-password" disabled></label>
+      </div>
+      <p id="memberFormError" class="text-sm text-red-600 mt-3" role="alert" hidden></p>
+      <div class="member-dialog-actions">
+        <button type="button" data-close-member class="admin-btn-secondary">Cancel</button>
+        <button type="submit" id="memberFormSubmit" class="admin-btn-primary">Save member</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ================= PROPERTY EDITOR ================= -->
+  <div id="propertyModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl my-8" role="dialog" aria-modal="true" aria-labelledby="propertyModalTitle">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+        <h2 id="propertyModalTitle" class="font-serif-luxury text-xl text-[#3b2721]">Add property</h2>
+        <button type="button" data-close-property class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-xl leading-none" aria-label="Close">&times;</button>
+      </div>
+      <form id="propertyForm" class="p-6 grid sm:grid-cols-2 gap-4" novalidate>
+        <input type="hidden" id="pfId">
+        <label class="admin-field sm:col-span-2"><span>Title *</span><input id="pfTitle" class="admin-input" maxlength="80" placeholder="e.g. Uluwatu Cliff Villa"></label>
+        <label class="admin-field"><span>Location *</span><input id="pfLocation" class="admin-input" maxlength="60" placeholder="e.g. Uluwatu"></label>
+        <label class="admin-field"><span>Tag</span><input id="pfTag" class="admin-input" maxlength="30" placeholder="e.g. Oceanfront"></label>
+        <label class="admin-field">
+          <span>Nightly rate (IDR) *</span>
+          <input id="pfNightlyRate" type="number" min="0" max="1000000000" step="1" class="admin-input" placeholder="e.g. 4000000">
+          <small class="text-xs text-slate-500" id="pfNightlyHint">Our villas range from Rp 3,000,000 to Rp 5,000,000</small>
+        </label>
+        <label class="admin-field"><span>Garage</span><input id="pfGarage" class="admin-input" maxlength="40" placeholder="e.g. 3 Cars"></label>
+        <label class="admin-field"><span>Bedrooms</span><input id="pfBedrooms" type="number" min="0" max="50" step="1" class="admin-input"></label>
+        <label class="admin-field"><span>Bathrooms</span><input id="pfBathrooms" type="number" min="0" max="50" step="1" class="admin-input"></label>
+        <label class="admin-field sm:col-span-2"><span>Building area</span><input id="pfArea" class="admin-input" maxlength="60" placeholder="e.g. 910 m² (9,800 sq ft)"></label>
+        <label class="admin-field sm:col-span-2"><span>Image URL *</span><input id="pfImage" class="admin-input" maxlength="500" placeholder="https://… or images/villa.jpg"></label>
+        <label class="admin-field sm:col-span-2"><span>Description</span><textarea id="pfDescription" rows="3" maxlength="600" class="admin-input"></textarea></label>
+        <label class="admin-field sm:col-span-2"><span>Facilities (one per line)</span><textarea id="pfFacilities" rows="5" maxlength="2000" class="admin-input"></textarea></label>
+        <label class="sm:col-span-2 flex items-center gap-2 text-sm text-slate-700">
+          <input type="checkbox" id="pfBestSeller" class="w-4 h-4 accent-[#5C3930]">
+          Best Seller (gold badge, listed first; the first one is featured in the hero)
+        </label>
+        <p id="propertyFormError" class="hidden sm:col-span-2 text-sm text-red-600" role="alert"></p>
+        <div class="sm:col-span-2 flex justify-end gap-3 pt-2">
+          <button type="button" data-close-property class="admin-btn-secondary">Cancel</button>
+          <button type="submit" class="admin-btn-primary">Save property</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="adminToast" class="hidden fixed bottom-6 right-6 z-[60] max-w-sm px-4 py-3 rounded-xl bg-[#231c19] text-white text-sm shadow-2xl" role="status"></div>
+
+  <script src="db.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

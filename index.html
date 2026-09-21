@@ -2,9 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>OASIS | Luxury Architectural Real Estate</title>
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#3b2721" />
+    <meta name="description" content="OASIS offers private, architect-designed luxury villas for nightly stays across Bali, Indonesia." />
+    <title>OASIS | Luxury Private Villa Stays in Bali</title>
+    <link rel="icon" type="image/svg+xml" href="oasis-mark.svg" />
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -12,52 +15,59 @@
     <header class="site-header" data-aos="fade-down" data-aos-duration="900">
       <div class="container nav-wrap">
         <div class="brand serif">
-          <span class="brand-mark">O</span>
+          <img class="brand-mark" src="oasis-mark.svg" alt="" width="42" height="42" aria-hidden="true" />
           <span>OASIS</span>
         </div>
 
-        <nav class="nav-menu" aria-label="Main navigation">
-          <a href="#home">Home</a>
-          <a href="#discover">Discover</a>
-          <a href="#residences">Residences</a>
-          <a href="#insights">Insights</a>
-          <a href="#contact">Contact</a>
-        </nav>
+        <!-- Mobile / tablet only: opens the menu panel -->
+        <button type="button" class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navPanel">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
 
-        <!-- Dynamic Auth Area: LOGIN or User Avatar + Logout -->
-        <div id="authNavContainer">
-          <a href="login.html" class="btn btn-primary nav-login-btn">LOGIN</a>
+        <!-- display: contents on desktop, so the layout there is unchanged -->
+        <div class="nav-panel" id="navPanel">
+          <nav class="nav-menu" aria-label="Main navigation">
+            <a href="#home">Home</a>
+            <a href="#discover">Discover</a>
+            <a href="#residences">Residences</a>
+            <a href="#insights">Insights</a>
+            <a href="#contact">Contact</a>
+          </nav>
+
+          <!-- Dynamic Auth Area: LOGIN or member badge + logout -->
+          <div id="authNavContainer">
+            <a href="login.html" class="btn btn-primary nav-login-btn">LOGIN</a>
+          </div>
         </div>
       </div>
     </header>
 
     <main>
       <!-- Hero Section -->
-      <section class="hero" id="home" data-aos="fade-up" data-aos-duration="1000">
+      <section class="hero" id="home">
         <div class="container hero-inner">
           <div class="hero-copy" data-aos="fade-right" data-aos-delay="200" data-aos-duration="900">
             <span class="kicker">Private Collection</span>
-            <h1 class="serif">The UAE's Most Exclusive Doors, Unlocked</h1>
+            <h1 class="serif">Bali's Most Exclusive Doors, Unlocked</h1>
             <p>
-              Discover architecture-led residences shaped for refined living,
-              discreet access, and iconic waterfront locations across the UAE.
+              Stay in architecture-led private villas shaped for refined living,
+              discreet service, and iconic oceanfront locations across Bali.
             </p>
 
             <div class="cta-row">
-              <a href="#residences" class="btn btn-primary" id="btnExploreCatalog">Lihat Semua Katalog</a>
+              <a href="#residences" class="btn btn-primary" id="btnExploreCatalog">View Full Catalog</a>
               <a href="#book" class="btn btn-secondary" id="btnBookMeeting">Book a Meeting</a>
             </div>
           </div>
 
-          <div class="hero-visual" aria-label="Featured property preview" data-aos="zoom-in" data-aos-delay="300" data-aos-duration="1000">
-            <div class="floating-card">
-              <div class="floating-thumb"></div>
+          <div class="hero-visual" aria-label="Featured villa preview" data-aos="zoom-in" data-aos-delay="300" data-aos-duration="1000">
+            <!-- Filled from the catalog by main.js -->
+            <div class="floating-card" id="heroFeatureCard">
+              <div class="floating-thumb" id="heroFeatureThumb"></div>
               <div class="floating-content">
-                <div>
-                  <h3 class="serif">Al Saraya Villa</h3>
-                  <span>Dubai Marina</span>
-                </div>
-                <div class="price">AED 28.4M</div>
+                <h3 class="serif" id="heroFeatureTitle">Uluwatu Cliff Villa</h3>
               </div>
             </div>
           </div>
@@ -65,7 +75,7 @@
       </section>
 
       <!-- Discover Section -->
-      <section class="section" id="discover" data-aos="fade-up" data-aos-duration="1000">
+      <section class="section" id="discover">
         <div class="container">
           <div class="section-header" data-aos="fade-up" data-aos-delay="100">
             <h2 class="serif">Tailored to the Discerning</h2>
@@ -74,25 +84,25 @@
           <div class="feature-grid">
             <article class="feature-card" data-aos="fade-up" data-aos-delay="100">
               <div class="feature-icon">✦</div>
-              <h3 class="serif">Exceptional Sourcing</h3>
+              <h3 class="serif">Handpicked Villas</h3>
               <p>
-                We curate only the rarest homes and signature addresses that define lasting value.
+                We curate only the island's most exceptional private villas and signature addresses.
               </p>
             </article>
 
             <article class="feature-card" data-aos="fade-up" data-aos-delay="200">
               <div class="feature-icon">◌</div>
-              <h3 class="serif">Discreet Access</h3>
+              <h3 class="serif">Discreet Stays</h3>
               <p>
-                Gain access to off-market opportunities and private sales with confidence and privacy.
+                Enjoy private villas that are not listed on public booking sites, with complete privacy.
               </p>
             </article>
 
             <article class="feature-card" data-aos="fade-up" data-aos-delay="300">
               <div class="feature-icon">▣</div>
-              <h3 class="serif">Dedicated Advisory</h3>
+              <h3 class="serif">Dedicated Concierge</h3>
               <p>
-                Guided by senior advisors who understand architecture, lifestyle, and investment precision.
+                A personal villa specialist arranges transfers, private chefs, and every detail of your stay.
               </p>
             </article>
           </div>
@@ -100,24 +110,22 @@
       </section>
 
       <!-- Residences / Catalog Section -->
-      <section class="section estates" id="residences" data-aos="fade-up" data-aos-duration="1000">
+      <section class="section estates" id="residences">
         <div class="container">
           <div class="section-header" data-aos="fade-up" data-aos-delay="100">
             <h2 class="serif">Featured Estates</h2>
             <p id="catalogSubtitle" class="section-sub">
-              Koleksi hunian eksklusif dengan arsitektur berkelas dunia.
+              An exclusive collection of private villas, available by the night.
             </p>
           </div>
 
-          <!-- Grid Katalog Properti (Rendered by main.js) -->
-          <div class="estate-grid" id="estateCatalogGrid">
-            <!-- Dynamic items from main.js -->
-          </div>
+          <!-- Property catalog grid (rendered by main.js) -->
+          <div class="estate-grid" id="estateCatalogGrid"></div>
         </div>
       </section>
 
       <!-- Featured Banner / Viewing Section -->
-      <section class="featured-banner" id="insights" data-aos="fade-up" data-aos-duration="1000">
+      <section class="featured-banner" id="insights">
         <div class="container">
           <div class="banner-box" data-aos="zoom-in" data-aos-delay="150">
             <div class="banner-overlay">
@@ -125,21 +133,44 @@
               <p>
                 Contemporary homes designed to feel serene, elevated, and unmistakably personal—crafted for those who value quiet luxury.
               </p>
-              <a href="#contact" class="btn btn-primary" id="btnScheduleViewing">Schedule a Viewing</a>
+              <div class="cta-row">
+                <a href="#contact" class="btn btn-primary" id="btnScheduleViewing">Schedule a Viewing</a>
+                <a href="#reserve" class="btn btn-secondary" id="btnBannerReserve" data-open-reserve="">Book Your Stay</a>
+              </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Guest Testimonials: published reviews from OasisDB (members can add their own).
+           The three starter reviews in db.js are SAMPLE CONTENT: replace or hide them before going live. -->
+      <section class="testimonials" id="testimonials" aria-labelledby="testimonialsTitle">
+        <div class="container">
+          <div class="section-header" data-aos="fade-up" data-aos-delay="100">
+            <span class="section-kicker">Guest Stories</span>
+            <h2 class="serif" id="testimonialsTitle">What Our Guests Say</h2>
+            <p class="section-sub">Stays remembered long after check-out.</p>
+            <button type="button" class="btn btn-primary testimonial-cta" id="btnShareStay">Share Your Stay</button>
+          </div>
+
+          <!-- Rendered by main.js -->
+          <div class="testimonial-grid" id="testimonialGrid"></div>
+
+          <div class="testimonial-more">
+            <button type="button" class="btn btn-secondary-dark" id="btnShowAllReviews" hidden>Show all reviews</button>
           </div>
         </div>
       </section>
     </main>
 
     <!-- Site Footer -->
-    <footer class="site-footer" id="contact" data-aos="fade-up" data-aos-duration="1000">
+    <footer class="site-footer" id="contact">
       <div class="container">
         <div class="footer-grid">
           <div data-aos="fade-up" data-aos-delay="100">
             <div class="footer-brand serif">OASIS</div>
             <p>
-              Curating exceptional architectural homes for buyers who value privacy, beauty, and enduring value.
+              Private, architect-designed villas across Bali for guests who value privacy, beauty, and exceptional service.
             </p>
           </div>
 
@@ -156,200 +187,435 @@
             <h4>Company</h4>
             <ul>
               <li><a href="#insights">Insights</a></li>
+              <li><a href="#testimonials">Guest Reviews</a></li>
               <li><a href="#contact">Contact</a></li>
-              <li><a href="#residences">Advisory</a></li>
+              <li><a href="#residences">Villas</a></li>
             </ul>
           </div>
 
           <div data-aos="fade-up" data-aos-delay="250">
             <h4>Contact</h4>
             <ul>
-              <li>hello@oasisliving.ae</li>
-              <li>+971 4 555 2201</li>
-              <li>Dubai, UAE</li>
+              <li><a href="mailto:oasis@gmail.com">oasis@gmail.com</a></li>
+              <li><a href="tel:+6282179808686">+62 821-7980-8686</a></li>
+              <li><a href="https://wa.me/6282179808686?text=Hello%20OASIS%2C%20I%20would%20like%20to%20ask%20about%20your%20villas." target="_blank" rel="noopener">WhatsApp: +62 821-7980-8686</a></li>
+              <li>Bali, Indonesia</li>
+              <li class="footer-clock">Bali time: <strong id="baliClock">--:-- WITA</strong></li>
             </ul>
           </div>
         </div>
 
         <div class="footer-bottom" data-aos="fade-up" data-aos-delay="300">
           <span>© 2026 OASIS</span>
-          <span>Private property advisory</span>
+          <span>Private villa stays &bull; Bali, Indonesia</span>
         </div>
       </div>
     </footer>
 
-    <!-- ================= MODALS SECTION ================= -->
+    <!-- Mobile quick-action bar (phones only; hidden on larger screens) -->
+    <nav class="mobile-quickbar" id="mobileQuickbar" aria-label="Quick actions">
+      <a href="#residences" class="quickbar-item" data-quick="villas">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-5h4v5"/></svg>
+        <span>Villas</span>
+      </a>
+      <button type="button" class="quickbar-item" data-quick="meeting">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
+        <span>Meeting</span>
+      </button>
+      <button type="button" class="quickbar-item" data-quick="viewing">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span>Viewing</span>
+      </button>
+      <a href="#testimonials" class="quickbar-item" data-quick="reviews">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.8 2.5 5.1 5.6.8-4 3.9.9 5.6-5-2.6-5 2.6.9-5.6-4-3.9 5.6-.8Z"/></svg>
+        <span>Reviews</span>
+      </a>
+      <button type="button" class="quickbar-item" data-quick="account">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.2-3.6 4-5.5 7.5-5.5s6.3 1.9 7.5 5.5"/></svg>
+        <span id="quickbarAccountLabel">Log In</span>
+        <span class="quickbar-badge" id="quickbarTicketCount" hidden>0</span>
+      </button>
+    </nav>
 
-    <!-- Modal 1: Book a Meeting -->
+    <!-- Concierge (customer service): always-visible help button + FAQ panel about OASIS and this site -->
+    <button type="button" class="cs-fab" id="csFab" aria-expanded="false" aria-controls="csPanel" aria-label="Need help? Open OASIS Concierge">
+      <img class="cs-logo" src="oasis-cs.svg" alt="" width="30" height="30" />
+      <span class="cs-fab-label">Need help?</span>
+    </button>
+
+    <section class="cs-panel" id="csPanel" role="dialog" aria-labelledby="csTitle" tabindex="-1" hidden>
+      <header class="cs-panel-head">
+        <span class="cs-panel-logo"><img src="oasis-cs.svg" alt="" width="34" height="34" /></span>
+        <div>
+          <h2 class="serif cs-panel-title" id="csTitle">OASIS Concierge</h2>
+          <p>Questions about our villas, booking or this website? Start here.</p>
+        </div>
+        <button type="button" class="cs-close" id="csClose" aria-label="Close concierge">&times;</button>
+      </header>
+
+      <div class="cs-panel-body">
+        <div class="cs-actions">
+          <button type="button" class="btn btn-primary btn-sm" id="csBookStay">Book Your Stay</button>
+          <a class="btn btn-whatsapp btn-sm" id="csAskWhatsApp" href="#" target="_blank" rel="noopener">
+            <svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#waGlyph" /></svg>
+            Chat with Us
+          </a>
+        </div>
+
+        <h3 class="cs-faq-heading">Frequently asked</h3>
+        <div class="cs-faq">
+          <details name="csFaq">
+            <summary>What is OASIS?</summary>
+            <p>OASIS is a private collection of luxury villas in Bali, rented by the night: <span id="csVillaSummary">architect-designed villas across the island</span>, each with a dedicated concierge. We rent villas; we don't sell them.</p>
+          </details>
+          <details name="csFaq">
+            <summary>How do I book a stay?</summary>
+            <p>Press <strong>Book</strong> on any villa (or <strong>Book Your Stay</strong> above), choose your dates and guests, then <strong>Continue to WhatsApp</strong>. Your request opens in WhatsApp ready to send, and our team replies to confirm availability and the final rate.</p>
+          </details>
+          <details name="csFaq">
+            <summary>How much does a night cost?</summary>
+            <p><span id="csRateRange">Each villa card shows its nightly rate.</span> The booking form shows an estimated total for your dates.</p>
+          </details>
+          <details name="csFaq">
+            <summary>Do I pay on the website?</summary>
+            <p>No. Nothing is charged online. Once your stay is confirmed on WhatsApp, our team arranges payment with you directly.</p>
+          </details>
+          <details name="csFaq">
+            <summary>Do I need an account?</summary>
+            <p>Not to browse or book a stay. A free member account adds full villa details, meetings with a villa specialist, private villa viewings, e-tickets and reviews. <a href="register.html">Create an account</a></p>
+          </details>
+          <details name="csFaq">
+            <summary>What are meetings and viewings?</summary>
+            <p>A <strong>meeting</strong> is a private consultation with a villa specialist, in Seminyak or online, to plan your stay. A <strong>viewing</strong> is a private visit to a villa with a chauffeur. Members book both here and receive an e-ticket.</p>
+          </details>
+          <details name="csFaq">
+            <summary>Which time zone do you use?</summary>
+            <p>Bali time (WITA, UTC+8) everywhere on the site, whatever time zone you are in.</p>
+          </details>
+          <details name="csFaq">
+            <summary>How can I reach you?</summary>
+            <p>WhatsApp or call <a class="text-nowrap" href="tel:+6282179808686">+62 821-7980-8686</a>, or email <a href="mailto:oasis@gmail.com">oasis@gmail.com</a>.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Shared icon: WhatsApp glyph, used as <use href="#waGlyph"> -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true" focusable="false">
+      <symbol id="waGlyph" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.59-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.22 1.36.19 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.42-.08-.12-.28-.2-.57-.35M12.05 21.78h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88 2.64 0 5.12 1.03 6.99 2.9a9.82 9.82 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.81 11.81 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.89a11.82 11.82 0 0 0-3.48-8.41Z" />
+      </symbol>
+    </svg>
+
+    <!-- ================= MODALS ================= -->
+
+    <!-- Modal: Book Your Stay (request sent on WhatsApp) -->
+    <div class="modal-overlay" id="reserveModal">
+      <div class="modal-dialog">
+        <button class="modal-close" aria-label="Close modal">&times;</button>
+        <div class="modal-header">
+          <span class="modal-kicker">Villa Reservation</span>
+          <h3 class="serif modal-title">Book Your Stay</h3>
+          <p class="modal-desc">Choose your villa and dates. We write the request for you and open WhatsApp, ready to send to our reservations team at <strong class="text-nowrap">+62 821-7980-8686</strong>.</p>
+        </div>
+        <form id="formReserve" class="modal-form" novalidate>
+          <p class="form-error" id="rsError" role="alert" hidden></p>
+          <div class="form-group">
+            <label for="rsVilla">Villa</label>
+            <select id="rsVilla" required>
+              <!-- Populated by main.js -->
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="rsCheckIn">Check-in</label>
+              <input type="date" id="rsCheckIn" required />
+            </div>
+            <div class="form-group">
+              <label for="rsCheckOut">Check-out</label>
+              <input type="date" id="rsCheckOut" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="rsGuests">Guests</label>
+              <input type="number" id="rsGuests" min="1" max="30" step="1" value="2" required />
+            </div>
+            <div class="form-group">
+              <label for="rsName">Full Name</label>
+              <input type="text" id="rsName" required maxlength="100" autocomplete="name" placeholder="Your name" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="rsNote">Special Requests <span class="label-optional">(optional)</span></label>
+            <textarea id="rsNote" class="textarea-short" rows="2" maxlength="300" placeholder="e.g. airport pickup, private chef, a celebration"></textarea>
+          </div>
+          <div class="reserve-summary" id="rsSummary" aria-live="polite"></div>
+          <button type="submit" class="btn btn-whatsapp btn-block">
+            <svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#waGlyph" /></svg>
+            Continue to WhatsApp
+          </button>
+          <small class="form-hint text-center">Nothing is charged online. Our team confirms availability and the final rate with you on WhatsApp.</small>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: WhatsApp reservation message ready -->
+    <div class="modal-overlay" id="reserveReadyModal">
+      <div class="modal-dialog">
+        <button class="modal-close" aria-label="Close modal">&times;</button>
+        <div class="booking-success-header text-center">
+          <div class="theme-success-badge whatsapp-badge">
+            <svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#waGlyph" /></svg>
+          </div>
+          <span class="modal-kicker">WhatsApp Reservation</span>
+          <h3 class="serif modal-title">Your Request Is Ready</h3>
+          <p class="modal-desc">
+            We opened WhatsApp with the message below. Press <strong>Send</strong> there to reach our reservations team at <span class="text-nowrap">+62 821-7980-8686</span>. If WhatsApp did not open, use the button below.
+          </p>
+        </div>
+        <pre class="wa-preview" id="rsPreview"></pre>
+        <div class="booking-success-actions">
+          <a href="#" id="rsOpenWhatsApp" class="btn btn-whatsapp" target="_blank" rel="noopener">
+            <svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#waGlyph" /></svg>
+            Open WhatsApp
+          </a>
+          <button type="button" class="btn btn-ghost modal-close-trigger">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Share Your Stay (member review) -->
+    <div class="modal-overlay" id="reviewModal">
+      <div class="modal-dialog">
+        <button class="modal-close" aria-label="Close modal">&times;</button>
+        <div class="modal-header">
+          <span class="modal-kicker">Guest Stories</span>
+          <h3 class="serif modal-title">Share Your Stay</h3>
+          <p class="modal-desc">Tell future guests about your villa. Your review appears on the website straight away.</p>
+        </div>
+        <form id="formReview" class="modal-form" novalidate>
+          <p class="form-error" id="rvError" role="alert" hidden></p>
+          <div class="form-group">
+            <span class="form-label" id="rvRatingLabel">Your Rating</span>
+            <!-- data-show (set by main.js) = how many stars are lit -->
+            <div class="star-input" id="rvStars" role="radiogroup" aria-labelledby="rvRatingLabel" data-show="5">
+              <input type="radio" id="rvRating1" name="rvRating" value="1" /><label for="rvRating1" title="1 star — Poor">★<span class="sr-only">1 star</span></label>
+              <input type="radio" id="rvRating2" name="rvRating" value="2" /><label for="rvRating2" title="2 stars — Fair">★<span class="sr-only">2 stars</span></label>
+              <input type="radio" id="rvRating3" name="rvRating" value="3" /><label for="rvRating3" title="3 stars — Good">★<span class="sr-only">3 stars</span></label>
+              <input type="radio" id="rvRating4" name="rvRating" value="4" /><label for="rvRating4" title="4 stars — Very good">★<span class="sr-only">4 stars</span></label>
+              <input type="radio" id="rvRating5" name="rvRating" value="5" checked /><label for="rvRating5" title="5 stars — Exceptional">★<span class="sr-only">5 stars</span></label>
+              <span class="star-input-text" id="rvStarsText" aria-hidden="true">Exceptional</span>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="rvVilla">Villa You Stayed In</label>
+              <select id="rvVilla" required>
+                <!-- Populated by main.js -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="rvNights">Nights</label>
+              <input type="number" id="rvNights" min="1" max="365" step="1" required placeholder="e.g. 3" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="rvText">Your Review</label>
+            <textarea id="rvText" rows="4" minlength="20" maxlength="500" required placeholder="What made your stay special?"></textarea>
+            <small class="form-hint" id="rvTextCount">0 / 500 characters (minimum 20)</small>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="rvName">Name to Show</label>
+              <input type="text" id="rvName" maxlength="40" required placeholder="e.g. Ayu S." />
+            </div>
+            <div class="form-group">
+              <label for="rvCity">City / Country <span class="label-optional">(optional)</span></label>
+              <input type="text" id="rvCity" maxlength="60" placeholder="e.g. Jakarta, Indonesia" />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Publish Review</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Book a Meeting -->
     <div class="modal-overlay" id="bookMeetingModal">
       <div class="modal-dialog">
         <button class="modal-close" aria-label="Close modal">&times;</button>
         <div class="modal-header">
           <span class="modal-kicker">Private Consultation</span>
-          <h3 class="serif modal-title">Book an Advisory Meeting</h3>
-          <p class="modal-desc">Jadwalkan sesi konsultasi tatap muka atau daring bersama Senior Real Estate Advisor kami.</p>
+          <h3 class="serif modal-title">Book a Meeting</h3>
+          <p class="modal-desc">Plan your stay in person or online with one of our Senior Villa Specialists. All times are Bali time (WITA, UTC+8).</p>
         </div>
         <form id="formBookMeeting" class="modal-form">
+          <p class="form-error" id="bmError" role="alert" hidden></p>
           <div class="form-group">
-            <label>Nama Lengkap</label>
-            <input type="text" id="bmName" required placeholder="Nama Anda" />
+            <label for="bmName">Full Name</label>
+            <input type="text" id="bmName" required maxlength="100" autocomplete="name" placeholder="Your name" />
           </div>
           <div class="form-group">
-            <label>Alamat E-mail</label>
-            <input type="email" id="bmEmail" required placeholder="nama@domain.com" />
+            <label for="bmEmail">Email Address</label>
+            <input type="email" id="bmEmail" required maxlength="254" autocomplete="email" placeholder="name@domain.com" />
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>Tanggal Pertemuan</label>
+              <label for="bmDate">Meeting Date</label>
               <input type="date" id="bmDate" required />
             </div>
             <div class="form-group">
-              <label>Waktu</label>
+              <label for="bmTime">Time (WITA)</label>
               <select id="bmTime" required>
-                <option value="10:00 - 11:30 GST">10:00 - 11:30 GST</option>
-                <option value="14:00 - 15:30 GST">14:00 - 15:30 GST</option>
-                <option value="16:30 - 18:00 GST">16:30 - 18:00 GST</option>
-                <option value="20:00 - 21:00 GST">20:00 - 21:00 GST</option>
+                <option value="10:00 – 11:30 WITA">10:00 – 11:30 WITA</option>
+                <option value="14:00 – 15:30 WITA">14:00 – 15:30 WITA</option>
+                <option value="16:30 – 18:00 WITA">16:30 – 18:00 WITA</option>
+                <option value="20:00 – 21:00 WITA">20:00 – 21:00 WITA</option>
               </select>
             </div>
           </div>
           <div class="form-group">
-            <label>Fokus Topik Konsultasi</label>
+            <label for="bmTopic">Consultation Focus</label>
             <select id="bmTopic">
-              <option value="Private Waterfront Acquisitions">Private Waterfront Acquisitions</option>
-              <option value="Signature Penthouses Portfolio">Signature Penthouses Portfolio</option>
-              <option value="High-Yield Prime Real Estate Investment">High-Yield Prime Real Estate Investment</option>
-              <option value="Off-Market VIP Transactions">Off-Market VIP Transactions</option>
+              <option value="Private Villa Stay">Private Villa Stay</option>
+              <option value="Long Stay &amp; Monthly Rental">Long Stay &amp; Monthly Rental</option>
+              <option value="Wedding &amp; Private Event">Wedding &amp; Private Event</option>
+              <option value="Group &amp; Corporate Retreat">Group &amp; Corporate Retreat</option>
             </select>
           </div>
-          <button type="submit" class="btn btn-primary btn-block">Konfirmasi Janji Temu</button>
+          <button type="submit" class="btn btn-primary btn-block">Confirm Appointment</button>
         </form>
       </div>
     </div>
 
-    <!-- Modal 2: Schedule a Viewing -->
+    <!-- Modal: Schedule a Viewing -->
     <div class="modal-overlay" id="scheduleViewingModal">
       <div class="modal-dialog">
         <button class="modal-close" aria-label="Close modal">&times;</button>
         <div class="modal-header">
           <span class="modal-kicker">Exclusive Site Visit</span>
           <h3 class="serif modal-title">Schedule a Viewing</h3>
-          <p class="modal-desc">Nikmati pengalaman kunjungan pribadi ke mahakarya arsitektur pilihan Anda dengan private chauffeur.</p>
+          <p class="modal-desc">Enjoy a private visit to the architectural masterpiece of your choice, with a private chauffeur. All sessions are Bali time (WITA, UTC+8).</p>
         </div>
         <form id="formScheduleViewing" class="modal-form">
+          <p class="form-error" id="svError" role="alert" hidden></p>
           <div class="form-group">
-            <label>Pilih Unit Properti</label>
+            <label for="svEstate">Select Villa</label>
             <select id="svEstate" required>
               <!-- Populated by main.js -->
             </select>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>Nama Pemohon</label>
-              <input type="text" id="svName" required placeholder="Nama Anda" />
+              <label for="svName">Your Name</label>
+              <input type="text" id="svName" required maxlength="100" autocomplete="name" placeholder="Your name" />
             </div>
             <div class="form-group">
-              <label>E-mail Kontak</label>
-              <input type="email" id="svEmail" required placeholder="nama@domain.com" />
+              <label for="svEmail">Contact Email</label>
+              <input type="email" id="svEmail" required maxlength="254" autocomplete="email" placeholder="name@domain.com" />
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>Rencana Tanggal Survei</label>
+              <label for="svDate">Viewing Date</label>
               <input type="date" id="svDate" required />
             </div>
             <div class="form-group">
-              <label>Sesi Waktu Kunjungan</label>
+              <label for="svTimeSlot">Session (WITA)</label>
               <select id="svTimeSlot" required>
-                <option value="Sesi Pagi (09:30 - 11:30)">Sesi Pagi (09:30 - 11:30)</option>
-                <option value="Sesi Siang (13:30 - 15:30)">Sesi Siang (13:30 - 15:30)</option>
-                <option value="Sesi Sunset Golden Hour (16:30 - 18:30)">Sesi Sunset Golden Hour (16:30 - 18:30)</option>
+                <option value="Morning (09:30 – 11:30 WITA)">Morning (09:30 – 11:30 WITA)</option>
+                <option value="Afternoon (13:30 – 15:30 WITA)">Afternoon (13:30 – 15:30 WITA)</option>
+                <option value="Sunset Golden Hour (16:30 – 18:30 WITA)">Sunset Golden Hour (16:30 – 18:30 WITA)</option>
               </select>
             </div>
           </div>
           <div class="form-group">
-            <label>Jumlah Tamu yang Hadir</label>
+            <label for="svGuests">Number of Guests</label>
             <select id="svGuests">
-              <option value="1-2 Orang">1 - 2 Orang</option>
-              <option value="3-4 Orang">3 - 4 Orang</option>
-              <option value="Keluarga Besar (> 4 Orang)">Keluarga Besar (> 4 Orang)</option>
+              <option value="1–2 Guests">1 – 2 Guests</option>
+              <option value="3–4 Guests">3 – 4 Guests</option>
+              <option value="Large Family (4+ Guests)">Large Family (4+ Guests)</option>
             </select>
           </div>
-          <button type="submit" class="btn btn-primary btn-block">Jadwalkan Kunjungan Privat</button>
+          <button type="submit" class="btn btn-primary btn-block">Schedule Private Viewing</button>
         </form>
       </div>
     </div>
 
-    <!-- Modal 3: Detail Spesifikasi Product (Kamar, Kamar Mandi, Fasilitas) -->
+    <!-- Modal: Property Detail (bedrooms, bathrooms, facilities) -->
     <div class="modal-overlay" id="propertyDetailModal">
       <div class="modal-dialog modal-dialog-lg">
         <button class="modal-close" aria-label="Close modal">&times;</button>
-        
+
         <div class="pd-hero-banner" id="pdImage">
           <div class="pd-banner-overlay">
             <div class="pd-badges">
               <span id="pdBestSellerBadge" class="badge-best-seller">★ BEST SELLER</span>
-              <span id="pdTag" class="estate-tag tag-gold">Waterfront</span>
+              <span id="pdTag" class="estate-tag tag-gold">Oceanfront</span>
             </div>
-            <h3 class="serif pd-title" id="pdTitle">Palm Crest Villa</h3>
+            <h3 class="serif pd-title" id="pdTitle">-</h3>
             <div class="pd-meta-row">
-              <span class="pd-location" id="pdLocation">Palm Jumeirah</span>
-              <span class="pd-price" id="pdPrice">AED 42.5M</span>
+              <span class="pd-location" id="pdLocation">-</span>
+              <div class="pd-price-stack">
+                <span class="pd-price" id="pdPrice">-</span>
+                <span class="pd-rate" id="pdRate">-</span>
+              </div>
             </div>
           </div>
         </div>
 
         <div class="pd-body">
-          <p class="pd-description" id="pdDescription">
-            Deskripsi properti...
-          </p>
+          <p class="pd-description" id="pdDescription">-</p>
 
-          <!-- Spesifikasi Utama (Kamar, Kamar Mandi, dsb) -->
+          <!-- Unit specifications -->
           <div class="pd-specs-section">
-            <h4 class="pd-section-heading">Spesifikasi Unit</h4>
+            <h4 class="pd-section-heading">Unit Specifications</h4>
             <div class="pd-specs-grid">
               <div class="pd-spec-box">
                 <span class="pd-spec-icon">🛏️</span>
-                <span class="pd-spec-label">Kamar Tidur</span>
+                <span class="pd-spec-label">Bedrooms</span>
                 <strong class="pd-spec-value" id="pdBedrooms">-</strong>
               </div>
               <div class="pd-spec-box">
                 <span class="pd-spec-icon">🚿</span>
-                <span class="pd-spec-label">Kamar Mandi</span>
+                <span class="pd-spec-label">Bathrooms</span>
                 <strong class="pd-spec-value" id="pdBathrooms">-</strong>
               </div>
               <div class="pd-spec-box">
                 <span class="pd-spec-icon">📐</span>
-                <span class="pd-spec-label">Luas Bangunan</span>
+                <span class="pd-spec-label">Building Area</span>
                 <strong class="pd-spec-value" id="pdArea">-</strong>
               </div>
               <div class="pd-spec-box">
                 <span class="pd-spec-icon">🚗</span>
-                <span class="pd-spec-label">Kapasitas Garasi</span>
+                <span class="pd-spec-label">Garage</span>
                 <strong class="pd-spec-value" id="pdGarage">-</strong>
               </div>
             </div>
           </div>
 
-          <!-- Fasilitas & Kemewahan -->
+          <!-- Facilities -->
           <div class="pd-facilities-section">
-            <h4 class="pd-section-heading">Fasilitas Eksklusif & Keunggulan</h4>
-            <ul class="pd-facilities-list" id="pdFacilitiesList">
-              <!-- Rendered dynamically -->
-            </ul>
+            <h4 class="pd-section-heading">Exclusive Facilities &amp; Highlights</h4>
+            <ul class="pd-facilities-list" id="pdFacilitiesList"></ul>
           </div>
         </div>
 
-        <!-- Action Footer Tetap (Tidak Terpotong) -->
+        <!-- Fixed action footer -->
         <div class="pd-actions">
-          <button type="button" id="btnScheduleFromDetail" class="btn btn-primary btn-block">
-            Jadwalkan Kunjungan untuk Properti Ini
+          <button type="button" id="btnScheduleFromDetail" class="btn btn-secondary-dark">
+            Schedule a Viewing
+          </button>
+          <button type="button" id="btnReserveFromDetail" class="btn btn-primary">
+            Book This Villa
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Modal: Pop-up Notifikasi Book Meeting Berhasil & E-Ticket Resmi OASIS -->
+    <!-- Modal: Meeting booked + official OASIS e-ticket -->
     <div class="modal-overlay" id="bookingSuccessModal">
       <div class="modal-dialog modal-dialog-ticket">
         <button class="modal-close" aria-label="Close modal">&times;</button>
@@ -357,26 +623,26 @@
           <div class="theme-success-badge">
             <span class="theme-badge-mark">O</span>
           </div>
-          <span class="modal-kicker">Konfirmasi Resmi OASIS</span>
-          <h3 class="serif modal-title">Jadwal Meeting Berhasil Dibuat</h3>
+          <span class="modal-kicker">Official OASIS Confirmation</span>
+          <h3 class="serif modal-title">Your Meeting Is Confirmed</h3>
           <p class="modal-desc">
-            E-Ticket konsultasi privat Anda telah aktif dan terdaftar. Konfirmasi resmi telah dikirim ke <strong id="bsSentEmail">klien@domain.com</strong>.
+            Your private consultation e-ticket is now active. A confirmation has been sent to <strong id="bsSentEmail">client@domain.com</strong>.
           </p>
         </div>
 
-        <!-- OASIS Luxury Advisory E-Ticket -->
+        <!-- OASIS consultation e-ticket -->
         <div class="oasis-eticket" id="oasisETicket">
           <div class="eticket-top">
             <div class="eticket-brand">
               <span class="eticket-logo serif">O</span>
               <div>
-                <div class="eticket-brand-title serif">OASIS REAL ESTATE</div>
-                <div class="eticket-brand-sub">PRIVATE ADVISORY &bull; VIP PASS</div>
+                <div class="eticket-brand-title serif">OASIS VILLAS</div>
+                <div class="eticket-brand-sub">PRIVATE CONSULTATION &bull; VIP PASS</div>
               </div>
             </div>
             <div class="eticket-pass-meta">
               <span class="eticket-pass-tag">CONFIRMED</span>
-              <div class="eticket-ref-code" id="etRefNo">OASIS-TKT-84920</div>
+              <div class="eticket-ref-code" id="etRefNo">OASIS-MTG-00000</div>
             </div>
           </div>
 
@@ -389,91 +655,94 @@
           <div class="eticket-body">
             <div class="eticket-grid">
               <div class="eticket-col">
-                <span class="eticket-field-label">NAMA KLIEN</span>
+                <span class="eticket-field-label">CLIENT NAME</span>
                 <strong class="eticket-field-val" id="etClientName">-</strong>
               </div>
               <div class="eticket-col">
-                <span class="eticket-field-label">EMAIL KONFIRMASI</span>
+                <span class="eticket-field-label">CONFIRMATION EMAIL</span>
                 <span class="eticket-field-val" id="etEmail">-</span>
               </div>
               <div class="eticket-col">
-                <span class="eticket-field-label">TANGGAL KONSULTASI</span>
+                <span class="eticket-field-label">CONSULTATION DATE</span>
                 <strong class="eticket-field-val highlight" id="etDate">-</strong>
               </div>
               <div class="eticket-col">
-                <span class="eticket-field-label">WAKTU PERTEMUAN</span>
+                <span class="eticket-field-label">MEETING TIME (BALI)</span>
                 <strong class="eticket-field-val highlight" id="etTime">-</strong>
               </div>
               <div class="eticket-col eticket-col-full">
-                <span class="eticket-field-label">FOKUS TOPIK ADVISORY</span>
+                <span class="eticket-field-label">CONSULTATION FOCUS</span>
                 <span class="eticket-field-val" id="etTopic">-</span>
               </div>
               <div class="eticket-col eticket-col-full">
-                <span class="eticket-field-label">SENIOR ADVISOR & LOKASI</span>
-                <span class="eticket-field-val">Alexander Wright (Senior Partner) &bull; Private VIP Suite DIFC Dubai / Online VIP Room</span>
+                <span class="eticket-field-label">VILLA SPECIALIST &amp; VENUE</span>
+                <span class="eticket-field-val">Alexander Wright (Senior Villa Specialist) &bull; Private VIP Lounge, Seminyak, Bali / Online VIP Room</span>
               </div>
             </div>
 
-            <!-- Barcode & Stamp Section -->
+            <!-- Barcode & seal -->
             <div class="eticket-barcode-row">
               <div class="barcode-block">
                 <div class="barcode-graphic"></div>
-                <span class="barcode-text" id="etBarcodeNum">OASIS-84920-VERIFIED-PASS</span>
+                <span class="barcode-text" id="etBarcodeNum">OASIS-VERIFIED-PASS</span>
               </div>
               <div class="eticket-seal">
                 <div class="seal-inner">
                   <span>OFFICIAL</span>
                   <strong>OASIS</strong>
-                  <small>ADVISORY</small>
+                  <small>VILLAS</small>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Tombol Aksi Pop-up Sesuai Tema -->
         <div class="booking-success-actions">
           <div class="ticket-action-row">
             <button type="button" id="btnPrintTicket" class="btn btn-secondary-dark">
-              Cetak / Simpan E-Ticket
+              Print / Save E-Ticket
             </button>
             <button type="button" id="btnViewEmailConfirmation" class="btn btn-primary">
-              Buka Surat Email
+              Open Confirmation Email
             </button>
           </div>
+          <a href="#" id="btnWhatsAppMeeting" class="btn btn-whatsapp" target="_blank" rel="noopener">
+            <svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#waGlyph" /></svg>
+            Confirm on WhatsApp
+          </a>
           <button type="button" class="btn btn-ghost modal-close-trigger">
-            Tutup
+            Close
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Modal 6: Pratinjau Surat Email Konfirmasi yang Diterima User -->
+    <!-- Modal: Confirmation email preview -->
     <div class="modal-overlay" id="emailConfirmationModal">
       <div class="modal-dialog modal-dialog-lg">
         <button class="modal-close" aria-label="Close modal">&times;</button>
-        
+
         <div class="email-client-header">
           <div class="email-client-topbar">
-            <span class="email-app-badge">✉️ Kotak Masuk Surat Konfirmasi</span>
-            <span class="email-status-pill">Status: Terkirim Otomatis</span>
+            <span class="email-app-badge">✉️ Confirmation Inbox</span>
+            <span class="email-status-pill">Status: Sent Automatically</span>
           </div>
           <div class="email-meta-grid">
             <div class="email-meta-item">
-              <span class="meta-tag">Dari:</span>
-              <span class="meta-val"><strong>OASIS Private Advisory</strong> &lt;advisory@oasisliving.ae&gt;</span>
+              <span class="meta-tag">From:</span>
+              <span class="meta-val"><strong>OASIS Guest Relations</strong> &lt;oasis@gmail.com&gt;</span>
             </div>
             <div class="email-meta-item">
-              <span class="meta-tag">Kepada:</span>
+              <span class="meta-tag">To:</span>
               <span class="meta-val" id="emRecipient">-</span>
             </div>
             <div class="email-meta-item">
-              <span class="meta-tag">Subjek:</span>
-              <span class="meta-val" id="emSubject">Konfirmasi Resmi: Jadwal Konsultasi Properti Privat OASIS</span>
+              <span class="meta-tag">Subject:</span>
+              <span class="meta-val" id="emSubject">Official Confirmation: OASIS Private Stay Consultation</span>
             </div>
             <div class="email-meta-item">
-              <span class="meta-tag">Waktu:</span>
-              <span class="meta-val" id="emTimestamp">Baru Saja</span>
+              <span class="meta-tag">Sent:</span>
+              <span class="meta-val" id="emTimestamp">-</span>
             </div>
           </div>
         </div>
@@ -481,69 +750,69 @@
         <div class="email-client-body">
           <div class="email-letterhead">
             <div class="email-brand-logo serif">OASIS</div>
-            <span class="email-brand-tagline">Private Property Advisory &bull; Dubai, UAE</span>
+            <span class="email-brand-tagline">Private Villa Stays &bull; Bali, Indonesia</span>
           </div>
 
           <div class="email-greeting">
-            <p>Yang Terhormat Bapak/Ibu <strong id="emClientName">-</strong>,</p>
+            <p>Dear <strong id="emClientName">-</strong>,</p>
             <p>
-              Terima kasih atas kepercayaan Anda kepada OASIS Real Estate. Kami mengonfirmasi bahwa sesi konsultasi privat portofolio hunian mewah Anda telah berhasil dijadwalkan bersama Senior Real Estate Advisor kami.
+              Thank you for choosing OASIS Villas. We are pleased to confirm that your private consultation to plan your villa stay has been scheduled with one of our Senior Villa Specialists.
             </p>
           </div>
 
           <div class="email-schedule-box">
-            <h5 class="schedule-box-title">DETAIL JADWAL KONSULTASI RESMI</h5>
+            <h5 class="schedule-box-title">OFFICIAL CONSULTATION DETAILS</h5>
             <table class="email-table">
               <tr>
-                <td>Nomor Referensi</td>
+                <td>Reference Number</td>
                 <td>: <strong id="emTableRef">-</strong></td>
               </tr>
               <tr>
-                <td>Tanggal Pertemuan</td>
+                <td>Meeting Date</td>
                 <td>: <span id="emTableDate">-</span></td>
               </tr>
               <tr>
-                <td>Waktu Sesi</td>
+                <td>Session Time</td>
                 <td>: <span id="emTableTime">-</span></td>
               </tr>
               <tr>
-                <td>Fokus Topik</td>
+                <td>Consultation Focus</td>
                 <td>: <span id="emTableTopic">-</span></td>
               </tr>
               <tr>
-                <td>Senior Advisor Bertugas</td>
-                <td>: <span>Alexander Wright (Senior Partner, Prime Acquisitions)</span></td>
+                <td>Villa Specialist</td>
+                <td>: <span>Alexander Wright (Senior Villa Specialist)</span></td>
               </tr>
               <tr>
-                <td>Format Pertemuan</td>
-                <td>: <span>Private VIP Advisory Suite (DIFC, Dubai) / Google Meet VIP Room</span></td>
+                <td>Meeting Format</td>
+                <td>: <span>Private VIP Lounge (Seminyak, Bali) / Google Meet VIP Room</span></td>
               </tr>
             </table>
           </div>
 
           <div class="email-footer-note">
             <p>
-              Mohon hadir 10 menit sebelum sesi dimulai. Jika Anda memerlukan penyesuaian jadwal atau memiliki permintaan khusus, silakan hubungi dedicated concierge kami di <strong>+971 4 555 2201</strong> atau balas surat ini.
+              Please arrive 10 minutes before your session begins. All times are Bali time (WITA, UTC+8). If you need to reschedule or have a special request, contact our dedicated concierge by phone or WhatsApp at <strong>+62 821-7980-8686</strong>, email <strong>oasis@gmail.com</strong>, or simply reply to this message.
             </p>
             <div class="email-signature">
               <div class="signature-name serif">Alexander Wright</div>
-              <div class="signature-title">Senior Partner & Head of Advisory &bull; OASIS Living</div>
+              <div class="signature-title">Senior Villa Specialist &bull; OASIS Villas</div>
             </div>
           </div>
 
           <div class="email-client-actions">
             <a href="#" id="btnOpenMailto" class="btn btn-primary btn-sm">
-              Buka di Aplikasi Email (Mailto)
+              Open in Email App
             </a>
             <button type="button" class="btn btn-secondary-dark btn-sm modal-close-trigger">
-              Tutup Surat
+              Close Email
             </button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Modal: Pop-up Notifikasi Schedule Viewing Berhasil Sesuai Tema OASIS -->
+    <!-- Modal: Viewing scheduled -->
     <div class="modal-overlay" id="viewingSuccessModal">
       <div class="modal-dialog modal-dialog-ticket">
         <button class="modal-close" aria-label="Close modal">&times;</button>
@@ -551,26 +820,26 @@
           <div class="theme-success-badge">
             <span class="theme-badge-mark">O</span>
           </div>
-          <span class="modal-kicker">Konfirmasi Kunjungan Properti</span>
-          <h3 class="serif modal-title">Jadwal Survei Berhasil Dibuat</h3>
+          <span class="modal-kicker">Viewing Confirmation</span>
+          <h3 class="serif modal-title">Your Viewing Is Scheduled</h3>
           <p class="modal-desc">
-            Reservasi kunjungan privat Anda telah terdaftar. Layanan private chauffeur dan site host VIP OASIS siap menyambut Anda.
+            Your private visit has been reserved. The OASIS private chauffeur and VIP site host will be ready to welcome you.
           </p>
         </div>
 
-        <!-- Viewing E-Pass Card -->
+        <!-- Viewing E-Pass -->
         <div class="oasis-eticket" id="oasisViewingETicket">
           <div class="eticket-top">
             <div class="eticket-brand">
               <span class="eticket-logo serif">O</span>
               <div>
                 <div class="eticket-brand-title serif">OASIS SITE VISIT</div>
-                <div class="eticket-brand-sub">EXCLUSIVE PROPERTY VIEWING PASS</div>
+                <div class="eticket-brand-sub">EXCLUSIVE VILLA VIEWING PASS</div>
               </div>
             </div>
             <div class="eticket-pass-meta">
               <span class="eticket-pass-tag">CONFIRMED</span>
-              <div class="eticket-ref-code" id="vsRefNo">OASIS-VISIT-91823</div>
+              <div class="eticket-ref-code" id="vsRefNo">OASIS-VISIT-00000</div>
             </div>
           </div>
 
@@ -583,32 +852,32 @@
           <div class="eticket-body">
             <div class="eticket-grid">
               <div class="eticket-col eticket-col-full">
-                <span class="eticket-field-label">UNIT PROPERTI</span>
+                <span class="eticket-field-label">VILLA</span>
                 <strong class="eticket-field-val highlight" id="vsProperty">-</strong>
               </div>
               <div class="eticket-col">
-                <span class="eticket-field-label">NAMA PEMOHON</span>
+                <span class="eticket-field-label">GUEST NAME</span>
                 <strong class="eticket-field-val" id="vsName">-</strong>
               </div>
               <div class="eticket-col">
-                <span class="eticket-field-label">EMAIL KONTAK</span>
+                <span class="eticket-field-label">CONTACT EMAIL</span>
                 <span class="eticket-field-val" id="vsEmail">-</span>
               </div>
               <div class="eticket-col">
-                <span class="eticket-field-label">TANGGAL SURVEI</span>
+                <span class="eticket-field-label">VIEWING DATE</span>
                 <strong class="eticket-field-val highlight" id="vsDate">-</strong>
               </div>
               <div class="eticket-col">
-                <span class="eticket-field-label">SESI WAKTU</span>
+                <span class="eticket-field-label">SESSION (BALI TIME)</span>
                 <strong class="eticket-field-val highlight" id="vsTimeSlot">-</strong>
               </div>
               <div class="eticket-col eticket-col-full">
-                <span class="eticket-field-label">JUMLAH TAMU & LAYANAN</span>
-                <span class="eticket-field-val" id="vsGuests">1 - 2 Orang (Termasuk Private Chauffeur & Refreshment)</span>
+                <span class="eticket-field-label">GUESTS &amp; SERVICES</span>
+                <span class="eticket-field-val" id="vsGuests">-</span>
               </div>
             </div>
 
-            <!-- Barcode & Stamp -->
+            <!-- Barcode & seal -->
             <div class="eticket-barcode-row">
               <div class="barcode-block">
                 <div class="barcode-graphic"></div>
@@ -628,17 +897,21 @@
         <div class="booking-success-actions">
           <div class="ticket-action-row">
             <button type="button" id="btnPrintViewingTicket" class="btn btn-secondary-dark">
-              Cetak / Simpan E-Ticket
+              Print / Save E-Ticket
             </button>
-            <button type="button" class="btn btn-primary modal-close-trigger">
-              Selesai
-            </button>
+            <a href="#" id="btnWhatsAppViewing" class="btn btn-whatsapp" target="_blank" rel="noopener">
+              <svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#waGlyph" /></svg>
+              Confirm on WhatsApp
+            </a>
           </div>
+          <button type="button" class="btn btn-ghost modal-close-trigger">
+            Done
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Modal: Informasi Belum Ada E-Ticket Meeting -->
+    <!-- Modal: No e-tickets yet -->
     <div class="modal-overlay" id="emptyETicketModal">
       <div class="modal-dialog">
         <button class="modal-close" aria-label="Close modal">&times;</button>
@@ -646,10 +919,10 @@
           <div class="theme-success-badge">
             <span class="theme-badge-mark">O</span>
           </div>
-          <span class="modal-kicker">Riwayat E-Ticket</span>
-          <h3 class="serif modal-title">Belum Ada Riwayat Jadwal</h3>
+          <span class="modal-kicker">E-Ticket History</span>
+          <h3 class="serif modal-title">No Bookings Yet</h3>
           <p class="modal-desc">
-            Anda belum memiliki jadwal pertemuan atau survei properti aktif. Silakan pilih "Book a Meeting" atau "Schedule a Viewing" untuk membuat jadwal pertama Anda.
+            You don't have any consultations or villa viewings yet. Choose "Book a Meeting" or "Schedule a Viewing" to create your first booking.
           </p>
         </div>
         <div class="booking-success-actions">
@@ -658,64 +931,63 @@
               Book a Meeting
             </button>
             <button type="button" id="btnViewFromEmptyETicket" class="btn btn-secondary-dark">
-              Schedule Viewing
+              Schedule a Viewing
             </button>
           </div>
           <button type="button" class="btn btn-ghost modal-close-trigger">
-            Tutup
+            Close
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Modal: Riwayat Lengkap Seluruh E-Ticket & Jadwal (Meeting & Viewing) -->
+    <!-- Modal: Full e-ticket history (meetings & viewings) -->
     <div class="modal-overlay" id="eTicketHistoryModal">
       <div class="modal-dialog modal-dialog-history">
         <button class="modal-close" aria-label="Close modal">&times;</button>
-        
+
         <div class="history-header">
           <div class="history-header-top">
             <div class="theme-success-badge-sm">
               <span class="theme-badge-mark">O</span>
             </div>
             <div>
-              <span class="modal-kicker">Riwayat Terjadwal</span>
-              <h3 class="serif modal-title">Riwayat E-Ticket & Jadwal Anda</h3>
+              <span class="modal-kicker">Your Schedule</span>
+              <h3 class="serif modal-title">Your E-Tickets &amp; Bookings</h3>
             </div>
           </div>
           <p class="modal-desc">
-            Daftar seluruh jadwal janji temu konsultasi dan survei properti eksklusif yang telah Anda buat.
+            Every consultation and private villa viewing you have booked. All times are Bali time (WITA).
           </p>
 
-          <!-- Filter Kategori Tabs -->
+          <!-- Category filter tabs -->
           <div class="history-filter-tabs">
-            <button type="button" class="history-tab-btn active" data-filter="all" id="tabFilterAll">Semua (<span id="countAll">0</span>)</button>
-            <button type="button" class="history-tab-btn" data-filter="meeting" id="tabFilterMeeting">Konsultasi Meeting (<span id="countMeeting">0</span>)</button>
-            <button type="button" class="history-tab-btn" data-filter="viewing" id="tabFilterViewing">Survei Properti (<span id="countViewing">0</span>)</button>
+            <button type="button" class="history-tab-btn active" data-filter="all" id="tabFilterAll">All (<span id="countAll">0</span>)</button>
+            <button type="button" class="history-tab-btn" data-filter="meeting" id="tabFilterMeeting">Meetings (<span id="countMeeting">0</span>)</button>
+            <button type="button" class="history-tab-btn" data-filter="viewing" id="tabFilterViewing">Viewings (<span id="countViewing">0</span>)</button>
           </div>
         </div>
 
         <div class="history-content-layout">
-          <!-- Kolom Kiri: Daftar Kartu Riwayat -->
+          <!-- Left: booking cards -->
           <div class="history-list-column">
-            <div class="history-list-wrap" id="historyListContainer">
-              <!-- Populated dynamically by main.js -->
-            </div>
+            <div class="history-list-wrap" id="historyListContainer"></div>
           </div>
 
-          <!-- Kolom Kanan: Pratinjau Detail E-Ticket Terpilih -->
-          <div class="history-ticket-preview-column" id="historyTicketPreviewWrap">
-            <!-- Populated dynamically with selected E-Ticket -->
-          </div>
+          <!-- Right: selected e-ticket preview -->
+          <div class="history-ticket-preview-column" id="historyTicketPreviewWrap"></div>
         </div>
       </div>
     </div>
 
-    <!-- Dedicated Clean 1-Page Print Container for E-Tickets -->
+    <!-- Short confirmation messages (e.g. review published) -->
+    <div class="site-toast" id="siteToast" role="status" hidden></div>
+
+    <!-- Dedicated one-page print container for e-tickets -->
     <div id="oasisPrintTarget" class="oasis-print-target"></div>
 
     <!-- Scripts -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
     <script src="db.js"></script>
     <script src="main.js"></script>
   </body>

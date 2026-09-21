@@ -1,96 +1,98 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registrasi Akun | OASIS Luxury Architectural Real Estate</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#3b2721">
+  <title>Create an Account | OASIS Luxury Villas Bali</title>
+  <link rel="icon" type="image/svg+xml" href="oasis-mark.svg">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="bg-[#181615] text-slate-800 min-h-screen flex items-center justify-center p-4 relative overflow-y-auto login-page">
-  <a href="landing.html" class="login-back">← Kembali ke Beranda</a>
+<body class="bg-[#181615] text-slate-800 min-h-screen flex items-center justify-center p-4 relative overflow-y-auto login-page auth-page">
+  <a href="index.html" class="login-back">← Back to Home</a>
 
   <div class="fixed inset-0 z-0">
-    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=80" class="w-full h-full object-cover filter brightness-[0.32] scale-105" alt="Oasis Residence">
+    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=80" class="w-full h-full object-cover filter brightness-[0.32] scale-105" alt="OASIS residence">
     <div class="absolute inset-0 bg-gradient-to-t from-[#12100f] via-transparent to-black/60"></div>
   </div>
 
   <div class="relative z-10 w-full max-w-4xl my-8 grid grid-cols-1 md:grid-cols-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl overflow-hidden shadow-2xl">
-    <!-- Kolom Kiri Informasi Brand -->
+    <!-- Left: brand info -->
     <div class="relative hidden md:flex flex-col justify-between p-10 bg-gradient-to-br from-black/60 via-black/30 to-transparent border-r border-white/10">
       <div>
         <span class="text-2xl font-bold tracking-widest text-white font-serif-luxury">OASIS</span>
       </div>
 
       <div class="my-auto space-y-4">
-        <span class="inline-block px-3 py-1 bg-white/15 backdrop-blur-md rounded-full text-[11px] uppercase tracking-wider text-white/90 border border-white/20">Akses Eksklusif</span>
-        <h2 class="text-3xl font-serif-luxury text-white leading-tight">Miliki Akses Penuh ke Portofolio Hunian Termewah.</h2>
-        <p class="text-white/70 text-sm leading-relaxed">Daftarkan akun untuk melihat spesifikasi detail unit, menjadwalkan survei privat, dan membuka seluruh katalog properti kami.</p>
-        
+        <span class="inline-block px-3 py-1 bg-white/15 backdrop-blur-md rounded-full text-[11px] uppercase tracking-wider text-white/90 border border-white/20">Exclusive Access</span>
+        <h2 class="text-3xl font-serif-luxury text-white leading-tight">Unlock Full Access to Bali's Finest Private Villas.</h2>
+        <p class="text-white/70 text-sm leading-relaxed">Create an account to see every villa with its nightly rate and facilities, and schedule private viewings.</p>
+
         <div class="pt-2 space-y-2 text-xs text-white/80">
           <div class="flex items-center gap-2">
-            <span class="text-emerald-400">✦</span> Akses seluruh koleksi katalog properti
+            <span class="text-emerald-400">✦</span> Access every villa and its nightly rate
           </div>
           <div class="flex items-center gap-2">
-            <span class="text-emerald-400">✦</span> Spesifikasi detail kamar, kamar mandi, & fasilitas
+            <span class="text-emerald-400">✦</span> Detailed bedroom, bathroom &amp; facility specifications
           </div>
           <div class="flex items-center gap-2">
-            <span class="text-emerald-400">✦</span> Penjadwalan Book Meeting & Schedule a Viewing
+            <span class="text-emerald-400">✦</span> Book a Meeting &amp; Schedule a Viewing
           </div>
         </div>
       </div>
 
       <div class="text-xs text-white/40">
-        &copy; 2026 OASIS Residences. Hak Cipta Terpelihara.
+        &copy; 2026 OASIS Residences. All rights reserved.
       </div>
     </div>
 
-    <!-- Kolom Kanan Form Registrasi -->
+    <!-- Right: registration form -->
     <div class="p-8 md:p-12 bg-white/95 backdrop-blur-2xl flex flex-col justify-center">
       <div class="mb-6">
         <div class="md:hidden mb-4">
           <span class="text-2xl font-bold tracking-widest text-[#5C3930] font-serif-luxury">OASIS</span>
         </div>
-        <h1 class="text-2xl font-bold text-slate-900 font-serif-luxury mb-1">Daftar Akun Baru</h1>
-        <p class="text-slate-600 text-sm">Lengkapi formulir untuk membuat akun lokal Anda</p>
+        <h1 class="text-2xl font-bold text-slate-900 font-serif-luxury mb-1">Create an Account</h1>
+        <p class="text-slate-600 text-sm">Fill in the form below to become an OASIS member</p>
       </div>
 
-      <!-- Alert Pesan Notifikasi -->
-      <div id="alertMessage" class="hidden mb-5 p-3.5 rounded-xl text-xs font-medium leading-relaxed"></div>
+      <!-- Alert message -->
+      <div id="alertMessage" class="hidden mb-5 p-3.5 rounded-xl text-xs font-medium leading-relaxed" role="alert"></div>
 
       <form id="registerForm" class="space-y-4" novalidate>
         <div>
-          <label for="regName" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Nama Lengkap</label>
-          <input id="regName" type="text" placeholder="Contoh: Budi Pratama" required class="w-full px-4 py-2.5 rounded-xl bg-slate-100/90 border border-slate-300 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#5C3930] focus:ring-1 focus:ring-[#5C3930] transition text-sm">
+          <label for="regName" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Full Name</label>
+          <input id="regName" type="text" maxlength="100" placeholder="e.g. Budi Pratama" required autocomplete="name" class="w-full px-4 py-2.5 rounded-xl bg-slate-100/90 border border-slate-300 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#5C3930] focus:ring-1 focus:ring-[#5C3930] transition text-sm">
         </div>
 
         <div>
-          <label for="regEmail" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Alamat E-mail</label>
-          <input id="regEmail" type="email" placeholder="nama@domain.com" required class="w-full px-4 py-2.5 rounded-xl bg-slate-100/90 border border-slate-300 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#5C3930] focus:ring-1 focus:ring-[#5C3930] transition text-sm">
+          <label for="regEmail" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Email Address</label>
+          <input id="regEmail" type="email" maxlength="254" placeholder="name@domain.com" required autocomplete="email" class="w-full px-4 py-2.5 rounded-xl bg-slate-100/90 border border-slate-300 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#5C3930] focus:ring-1 focus:ring-[#5C3930] transition text-sm">
         </div>
 
         <div>
-          <label for="regPassword" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Kata Sandi</label>
-          <input id="regPassword" type="password" placeholder="Minimal 6 karakter" required minlength="6" class="w-full px-4 py-2.5 rounded-xl bg-slate-100/90 border border-slate-300 text-slate-800 focus:outline-none focus:border-[#5C3930] focus:ring-1 focus:ring-[#5C3930] transition text-sm">
+          <label for="regPassword" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Password</label>
+          <input id="regPassword" type="password" placeholder="At least 6 characters" required minlength="6" maxlength="128" autocomplete="new-password" class="w-full px-4 py-2.5 rounded-xl bg-slate-100/90 border border-slate-300 text-slate-800 focus:outline-none focus:border-[#5C3930] focus:ring-1 focus:ring-[#5C3930] transition text-sm">
         </div>
 
         <div>
-          <label for="regConfirmPassword" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Konfirmasi Kata Sandi</label>
-          <input id="regConfirmPassword" type="password" placeholder="Ulangi kata sandi" required minlength="6" class="w-full px-4 py-2.5 rounded-xl bg-slate-100/90 border border-slate-300 text-slate-800 focus:outline-none focus:border-[#5C3930] focus:ring-1 focus:ring-[#5C3930] transition text-sm">
+          <label for="regConfirmPassword" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Confirm Password</label>
+          <input id="regConfirmPassword" type="password" placeholder="Re-enter your password" required minlength="6" maxlength="128" autocomplete="new-password" class="w-full px-4 py-2.5 rounded-xl bg-slate-100/90 border border-slate-300 text-slate-800 focus:outline-none focus:border-[#5C3930] focus:ring-1 focus:ring-[#5C3930] transition text-sm">
         </div>
 
         <button type="submit" id="btnSubmitRegister" class="w-full mt-2 py-3.5 bg-[#5C3930] hover:bg-[#462b24] text-white font-medium rounded-xl shadow-lg shadow-[#5C3930]/25 transition duration-200 text-sm tracking-wide">
-          Daftar Akun
+          Create Account
         </button>
       </form>
 
       <div class="mt-6 pt-5 border-t border-slate-200 text-center">
         <p class="text-sm text-slate-600">
-          Sudah memiliki akun?
-          <a href="login.html" class="text-[#5C3930] font-semibold hover:underline ml-1">Langsung Login Saja</a>
+          Already have an account?
+          <a href="login.html" class="text-[#5C3930] font-semibold hover:underline ml-1">Log In</a>
         </p>
       </div>
     </div>
@@ -104,15 +106,13 @@
       const btnSubmit = document.getElementById('btnSubmitRegister');
 
       function showAlert(text, type = 'error') {
-        alertMessage.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'border-red-200', 'bg-emerald-50', 'text-emerald-700', 'border-emerald-200');
-        alertMessage.classList.add('border');
-
+        alertMessage.className = 'mb-5 p-3.5 rounded-xl text-xs font-medium leading-relaxed border';
         if (type === 'error') {
           alertMessage.classList.add('bg-red-50', 'text-red-700', 'border-red-200');
-          alertMessage.innerHTML = `⚠️ <span>${text}</span>`;
+          alertMessage.textContent = `⚠️ ${text}`;
         } else {
           alertMessage.classList.add('bg-emerald-50', 'text-emerald-700', 'border-emerald-200');
-          alertMessage.innerHTML = `✓ <span>${text}</span>`;
+          alertMessage.textContent = `✓ ${text}`;
         }
       }
 
@@ -124,36 +124,36 @@
         const password = document.getElementById('regPassword').value;
         const confirmPassword = document.getElementById('regConfirmPassword').value;
 
-        // Validasi input
         if (!name || !email || !password || !confirmPassword) {
-          showAlert('Mohon isi semua kolom yang tersedia.');
+          showAlert('Please fill in all fields.');
           return;
         }
 
         if (password.length < 6) {
-          showAlert('Kata sandi harus terdiri dari minimal 6 karakter.');
+          showAlert('Password must be at least 6 characters.');
           return;
         }
 
         if (password !== confirmPassword) {
-          showAlert('Konfirmasi kata sandi tidak cocok. Pastikan kedua kata sandi sama.');
+          showAlert('Passwords do not match. Please make sure both passwords are the same.');
           return;
         }
 
         btnSubmit.disabled = true;
-        btnSubmit.innerText = 'Memproses...';
+        btnSubmit.innerText = 'Processing...';
 
+        // OasisDB also validates the email format
         const result = OasisDB.registerUser({ name, email, password });
 
         if (!result.success) {
           showAlert(result.message, 'error');
           btnSubmit.disabled = false;
-          btnSubmit.innerText = 'Daftar Akun';
+          btnSubmit.innerText = 'Create Account';
         } else {
-          showAlert(result.message + ' Mengalihkan ke halaman login...', 'success');
+          showAlert(result.message + ' Redirecting to login...', 'success');
           registerForm.reset();
           setTimeout(() => {
-            window.location.href = 'login.html?registered=true&email=' + encodeURIComponent(email);
+            window.location.href = 'login.html?registered=true&email=' + encodeURIComponent(result.user.email);
           }, 1200);
         }
       });
