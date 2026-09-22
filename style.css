@@ -109,12 +109,12 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  background: rgba(58, 39, 33, 0.28);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(12px);
-  border-radius: 18px;
-  padding: 16px 22px;
-  box-shadow: 0 14px 30px rgba(23, 18, 16, 0.12);
+  background: rgba(58, 39, 33, 0.28); /* semi-transparent brown */
+  border: 1px solid rgba(255, 255, 255, 0.14); /* garis tipis untuk batas navigasi */
+  backdrop-filter: blur(12px); /* efek kaca buram untuk latar belakang */
+  border-radius: 18px; /* sudut membulat untuk tampilan elegan */
+  padding: 16px 22px; /* padding internal untuk ruang di dalam navigasi */
+  box-shadow: 0 14px 30px rgba(23, 18, 16, 0.12); /* bayangan lembut untuk efek kedalaman */
 }
 
 .brand {
@@ -641,6 +641,18 @@ a {
   max-width: 600px;
   color: var(--muted);
   font-size: 1.05rem;
+}
+
+.catalog-login-link {
+  color: #c5a880;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.catalog-login-link:hover {
+  color: #dfc299;
 }
 
 /* Header User Auth Profile */

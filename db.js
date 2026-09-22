@@ -270,11 +270,13 @@ const OasisDB = (function () {
       writeJSON(USERS_STORAGE_KEY, users);
     }
 
-    if (!Array.isArray(readJSON(PROPERTIES_STORAGE_KEY, null))) {
+    const storedProps = readJSON(PROPERTIES_STORAGE_KEY, null);
+    if (!Array.isArray(storedProps) || storedProps.length === 0) {
       writeJSON(PROPERTIES_STORAGE_KEY, copy(DEFAULT_PROPERTIES));
     }
 
-    if (!Array.isArray(readJSON(TESTIMONIALS_STORAGE_KEY, null))) {
+    const storedTestimonials = readJSON(TESTIMONIALS_STORAGE_KEY, null);
+    if (!Array.isArray(storedTestimonials) || storedTestimonials.length === 0) {
       writeJSON(TESTIMONIALS_STORAGE_KEY, copy(DEFAULT_TESTIMONIALS));
     }
 
@@ -554,7 +556,11 @@ const OasisDB = (function () {
 
   function getProperties() {
     initDB();
-    const properties = readJSON(PROPERTIES_STORAGE_KEY, []);
+    let properties = readJSON(PROPERTIES_STORAGE_KEY, null);
+    if (!Array.isArray(properties) || properties.length === 0) {
+      properties = copy(DEFAULT_PROPERTIES);
+      writeJSON(PROPERTIES_STORAGE_KEY, properties);
+    }
     return Array.isArray(properties) ? properties : [];
   }
 
@@ -601,12 +607,25 @@ const OasisDB = (function () {
   // Every review, newest first
   function getTestimonials() {
     initDB();
-    const testimonials = readJSON(TESTIMONIALS_STORAGE_KEY, []);
+    let testimonials = readJSON(TESTIMONIALS_STORAGE_KEY, null);
+    if (!Array.isArray(testimonials) || testimonials.length === 0) {
+      testimonials = copy(DEFAULT_TESTIMONIALS);
+      writeJSON(TESTIMONIALS_STORAGE_KEY, testimonials);
+    }
     return Array.isArray(testimonials) ? testimonials : [];
   }
 
   function getPublishedTestimonials() {
-    return getTestimonials().filter((t) => t.status === 'published');
+    let published = getTestimonials().filter((t) => t.status === 'published');
+    if (published.length === 0) {
+      resetTestimonials();
+      published = getTestimonials().filter((t) => t.status === 'published');
+    }
+    return published;
+  }
+
+  function resetTestimonials() {
+    return writeJSON(TESTIMONIALS_STORAGE_KEY, copy(DEFAULT_TESTIMONIALS));
   }
 
   // A member writes a review; it is published straight away (admins can hide it)
@@ -716,6 +735,7 @@ const OasisDB = (function () {
     saveProperty,
     deleteProperty,
     resetProperties,
+    resetTestimonials,
     getTestimonials,
     getPublishedTestimonials,
     addTestimonial,

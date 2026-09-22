@@ -178,7 +178,7 @@ function renderCatalog(isAuth) {
   if (catalogSectionSub) {
     catalogSectionSub.innerHTML = isAuth
       ? `All <strong>${plural(itemsToRender.length, 'private villa')}</strong> ${itemsToRender.length === 1 ? 'is' : 'are'} open to you. Click <em>Details</em> to see bedrooms, bathrooms, facilities and nightly rates.`
-      : `Featuring our <strong>Best Seller</strong> private villas across Bali, available by the night.`;
+      : `Featuring our <strong>Best Seller</strong> private villas across Bali. <a href="login.html?reason=auth_required&feature=The+full+catalog" class="catalog-login-link">Log in</a> to view all private residences.`;
   }
 
   if (itemsToRender.length === 0) {
@@ -325,7 +325,7 @@ const MAX_RESERVATION_NIGHTS = 365;
 const MAX_RESERVATION_GUESTS = 30;
 
 function whatsappUrl(message) {
-  return `https://wa.me/${OASIS_CONTACT.whatsapp}?text=${encodeURIComponent(message)}`;
+  return `https://wa.me/${OASIS_CONTACT.whatsapp}?text=${encodeURIComponent(message)}`; //wa.me link to the admin number with the message pre-filled
 }
 
 function validateReservation({ property, checkIn, checkOut, guests, name }) {
@@ -1371,7 +1371,7 @@ function preparePrintTicket(sourceElement) {
 function printETicket(sourceElement) {
   if (!sourceElement) return;
   preparePrintTicket(sourceElement);
-  window.print();
+  window.print(); //print pdf
 }
 
 // Ctrl + P / Cmd + P while a ticket is open prints that ticket; otherwise the page prints normally

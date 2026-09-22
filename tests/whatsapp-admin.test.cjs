@@ -148,6 +148,17 @@ test('every villa is listed for everyone, Best Sellers first', () => {
   assert.ok(list.slice(firstOther).every((p) => !p.isBestSeller));
 });
 
+test('default testimonials are seeded and restored if empty', () => {
+  const { run } = load('main.js');
+  const testimonials = run('OasisDB.getPublishedTestimonials()');
+  assert.ok(testimonials.length >= 3);
+  assert.ok(testimonials.some((t) => t.id === 'tst_sample_1'));
+
+  // Test reset/restore behavior
+  run('OasisDB.resetTestimonials()');
+  assert.equal(run('OasisDB.getPublishedTestimonials().length'), 3);
+});
+
 test('guests see only best seller villas in catalog while members see all villas', () => {
   const { run } = load('main.js');
   const all = run('catalogProperties')();
@@ -156,4 +167,5 @@ test('guests see only best seller villas in catalog while members see all villas
   assert.equal(guestVillas.length, 3);
   assert.ok(guestVillas.every((p) => p.isBestSeller));
 });
+
 

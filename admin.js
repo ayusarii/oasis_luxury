@@ -284,6 +284,14 @@ function setupDashboard() {
     toast(OasisDB.deleteTestimonial(review.id) ? 'Review deleted.' : 'The review could not be deleted.');
     renderAll();
   });
+  const btnRestoreReviews = document.getElementById('btnRestoreReviews');
+  if (btnRestoreReviews) {
+    btnRestoreReviews.addEventListener('click', () => {
+      if (!confirm('Restore default guest testimonials? All custom reviews will be replaced.')) return;
+      toast(OasisDB.resetTestimonials() ? 'Default reviews restored.' : 'The reviews could not be restored.');
+      renderAll();
+    });
+  }
 
   // Property editor
   const propertyModal = document.getElementById('propertyModal');
