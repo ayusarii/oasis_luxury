@@ -10,7 +10,7 @@
  */
 
 // Username is matched case-insensitively, the password exactly
-const ADMIN_ACCOUNT = { username: 'BagaskaraAP', password: 'kamumaucaripasswordyangpanjanggini' };
+const ADMIN_ACCOUNT = { username: 'oasisluxury@admin.id', password: 'vilamewah' };
 const ADMIN_SESSION_KEY = 'oasis_admin_session';
 const ADMIN_TABS = ['overview', 'bookings', 'members', 'properties', 'reviews'];
 
